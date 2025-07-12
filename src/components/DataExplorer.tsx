@@ -111,72 +111,74 @@ export function DataExplorer() {
             Compare development indicators across multiple countries
           </p>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Country Selection */}
-          <div className="space-y-2">
-            <label htmlFor="country-select" className="text-sm font-medium">
-              Select Countries (multiple):
-            </label>
-            <div id="country-select">
-              <CountrySelect
-                countryOptions={countryOptions}
-                selectedCountries={selectedCountries}
-                onSelectionChange={setSelectedCountries}
-                isLoading={countriesLoading}
-                error={countriesError}
-              />
+        <CardContent className="space-y-6">
+          {/* Main selectors in responsive grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {/* Country Selection */}
+            <div className="space-y-2">
+              <label htmlFor="country-select" className="text-sm font-medium">
+                Select Countries (multiple):
+              </label>
+              <div id="country-select">
+                <CountrySelect
+                  countryOptions={countryOptions}
+                  selectedCountries={selectedCountries}
+                  onSelectionChange={setSelectedCountries}
+                  isLoading={countriesLoading}
+                  error={countriesError}
+                />
+              </div>
+            </div>
+
+            {/* Series Selection */}
+            <div className="space-y-2">
+              <label htmlFor="series-select" className="text-sm font-medium">
+                Select Data Series:
+              </label>
+              <div id="series-select">
+                <SeriesSelect
+                  seriesOptions={seriesOptions}
+                  selectedSeries={selectedSeries}
+                  onSelectionChange={setSelectedSeries}
+                  isLoading={seriesLoading}
+                  error={seriesError}
+                />
+              </div>
+            </div>
+
+            {/* Chart Type Selection - always visible for better UX */}
+            <div className="space-y-2">
+              <label htmlFor="chart-type" className="text-sm font-medium">Chart Type:</label>
+              <Select value={chartType} onValueChange={(value: "line" | "bar") => setChartType(value)}>
+                <SelectTrigger id="chart-type">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="line">Line Chart</SelectItem>
+                  <SelectItem value="bar">Bar Chart</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          {/* Series Selection */}
-          <div className="space-y-2">
-            <label htmlFor="series-select" className="text-sm font-medium">
-              Select Data Series:
-            </label>
-            <div id="series-select">
-              <SeriesSelect
-                seriesOptions={seriesOptions}
-                selectedSeries={selectedSeries}
-                onSelectionChange={setSelectedSeries}
-                isLoading={seriesLoading}
-                error={seriesError}
-              />
-            </div>
-          </div>
-
-          {/* Chart Options */}
-          {hasData && (
-            <div className="flex gap-4 items-center">
-              <div className="space-y-2">
-                <label htmlFor="chart-type" className="text-sm font-medium">Chart Type:</label>
-                <Select value={chartType} onValueChange={(value: "line" | "bar") => setChartType(value)}>
-                  <SelectTrigger id="chart-type" className="w-32">
+          {/* Additional Chart Options */}
+          {hasData && chartType === "bar" && availableYears.length > 0 && (
+            <div className="flex justify-start">
+              <div className="space-y-2 w-32">
+                <label htmlFor="compare-year" className="text-sm font-medium">Compare Year:</label>
+                <Select value={compareYear.toString()} onValueChange={(value) => setCompareYear(Number(value))}>
+                  <SelectTrigger id="compare-year">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="line">Line Chart</SelectItem>
-                    <SelectItem value="bar">Bar Chart</SelectItem>
+                    {availableYears.map(year => (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
-              
-              {chartType === "bar" && availableYears.length > 0 && (
-                <div className="space-y-2">
-                  <label htmlFor="compare-year" className="text-sm font-medium">Compare Year:</label>
-                  <Select value={compareYear.toString()} onValueChange={(value) => setCompareYear(Number(value))}>
-                    <SelectTrigger id="compare-year" className="w-24">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableYears.map(year => (
-                        <SelectItem key={year} value={year.toString()}>
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
             </div>
           )}
         </CardContent>
