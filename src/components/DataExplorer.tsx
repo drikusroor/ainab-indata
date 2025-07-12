@@ -6,6 +6,7 @@ import {
 } from "@/lib/hooks/use-worldbank-data"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { LineChart } from "@/components/charts/LineChart"
 import { BarChart } from "@/components/charts/BarChart"
 import { CountrySelect } from "@/components/CountrySelect"
@@ -21,6 +22,7 @@ export function DataExplorer() {
   const [selectedSeries, setSelectedSeries] = useState<string>("NY.GDP.MKTP.CD")
   const [chartType, setChartType] = useState<"line" | "bar">("line")
   const [compareYear, setCompareYear] = useState<number>(2023)
+  const [displayMode, setDisplayMode] = useState<"visualization" | "table" | "side-by-side">("visualization")
 
   // Fetch metadata
   const { 
@@ -180,7 +182,7 @@ export function DataExplorer() {
         </CardContent>
       </Card>
 
-      {/* Data Visualization */}
+      {/* Data Visualization and Table */}
       {hasData && (
         <Card>
           <CardHeader>
@@ -192,19 +194,40 @@ export function DataExplorer() {
             </p>
           </CardHeader>
           <CardContent>
-            {renderDataVisualization()}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Data Table */}
-      {hasData && multiCountryData && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Data Table</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <DataTable data={multiCountryData} />
+            <Tabs value={displayMode} onValueChange={(value) => setDisplayMode(value as "visualization" | "table" | "side-by-side")}>
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="visualization">Visualization</TabsTrigger>
+                <TabsTrigger value="table">Table</TabsTrigger>
+                <TabsTrigger value="side-by-side">Side-by-Side</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="visualization" className="mt-4">
+                <div className="w-full h-96">
+                  {renderDataVisualization()}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="table" className="mt-4">
+                {multiCountryData && <DataTable data={multiCountryData} />}
+              </TabsContent>
+              
+              <TabsContent value="side-by-side" className="mt-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium">Visualization</h4>
+                    <div className="w-full h-80">
+                      {renderDataVisualization()}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium">Data Table</h4>
+                    <div className="max-h-80 overflow-auto">
+                      {multiCountryData && <DataTable data={multiCountryData} />}
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
       )}
