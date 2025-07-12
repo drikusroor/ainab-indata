@@ -32,7 +32,7 @@ function sanitizeFilename(str: string): string {
     .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
     .replace(/\s+/g, '-') // Replace spaces with hyphens
     .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-    .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+    .replace(/(^-)|(-$)/g, ''); // Remove leading/trailing hyphens
 }
 
 /**
@@ -42,6 +42,14 @@ function createFilename(countryCode: string, seriesCode: string): string {
   const sanitizedCountryCode = sanitizeFilename(countryCode);
   const sanitizedSeriesCode = sanitizeFilename(seriesCode);
   return `${sanitizedCountryCode}-${sanitizedSeriesCode}.csv`;
+}
+
+/**
+ * Generates the expected filename for a given country code and series code
+ * This function can be used to reconstruct filenames from the optimized metadata
+ */
+function getFilenameFromCodes(countryCode: string, seriesCode: string): string {
+  return createFilename(countryCode, seriesCode);
 }
 
 /**
@@ -76,9 +84,11 @@ async function writeCountryDatasetFile(
   ];
 
   // Prepare the data rows (transform from wide to long format)
+  const yearPattern = /\d{4}/;
   const records = yearColumns
     .map(yearCol => {
-      const year = yearCol.match(/\d{4}/)?.[0];
+      const yearMatch = yearPattern.exec(yearCol);
+      const year = yearMatch ? yearMatch[0] : null;
       const value = data.yearlyData[yearCol];
       return year ? { year, value: value || '' } : null;
     })
@@ -93,37 +103,150 @@ async function writeCountryDatasetFile(
 }
 
 /**
- * Creates a metadata file with information about all the generated files
+ * Creates optimized metadata files with normalized structure
  */
-async function createMetadataFile(
+async function createOptimizedMetadataFiles(
   outputDir: string,
   processedData: Map<string, ProcessedRow>
 ): Promise<void> {
-  const metadataPath = path.join(outputDir, '_metadata.csv');
+  // Create countries lookup table
+  const countriesPath = path.join(outputDir, '_countries.csv');
+  const seriesPath = path.join(outputDir, '_series.csv');
+  const indexPath = path.join(outputDir, '_index.csv');
   
-  const headers = [
-    { id: 'filename', title: 'Filename' },
-    { id: 'countryName', title: 'Country Name' },
-    { id: 'countryCode', title: 'Country Code' },
-    { id: 'seriesName', title: 'Series Name' },
-    { id: 'seriesCode', title: 'Series Code' }
-  ];
+  // Extract unique countries and series
+  const countriesMap = new Map<string, { name: string; code: string }>();
+  const seriesMap = new Map<string, { name: string; code: string }>();
+  const fileIndex: { countryCode: string; seriesCode: string }[] = [];
 
-  const records = Array.from(processedData.values()).map(data => ({
-    filename: createFilename(data.countryCode, data.seriesCode),
-    countryName: data.countryName,
-    countryCode: data.countryCode,
-    seriesName: data.seriesName,
-    seriesCode: data.seriesCode
-  }));
-
-  const csvWriter = createObjectCsvWriter({
-    path: metadataPath,
-    header: headers
+  Array.from(processedData.values()).forEach(data => {
+    countriesMap.set(data.countryCode, {
+      name: data.countryName,
+      code: data.countryCode
+    });
+    seriesMap.set(data.seriesCode, {
+      name: data.seriesName,
+      code: data.seriesCode
+    });
+    fileIndex.push({
+      countryCode: data.countryCode,
+      seriesCode: data.seriesCode
+    });
   });
 
-  await csvWriter.writeRecords(records);
-  console.log(`Created metadata file: ${metadataPath}`);
+  // Write countries file
+  const countriesWriter = createObjectCsvWriter({
+    path: countriesPath,
+    header: [
+      { id: 'code', title: 'Country Code' },
+      { id: 'name', title: 'Country Name' }
+    ]
+  });
+  
+  const countriesRecords = Array.from(countriesMap.values())
+    .sort((a, b) => a.code.localeCompare(b.code));
+  await countriesWriter.writeRecords(countriesRecords);
+
+  // Write series file
+  const seriesWriter = createObjectCsvWriter({
+    path: seriesPath,
+    header: [
+      { id: 'code', title: 'Series Code' },
+      { id: 'name', title: 'Series Name' }
+    ]
+  });
+  
+  const seriesRecords = Array.from(seriesMap.values())
+    .sort((a, b) => a.code.localeCompare(b.code));
+  await seriesWriter.writeRecords(seriesRecords);
+
+  // Write index file (just country-series combinations)
+  const indexWriter = createObjectCsvWriter({
+    path: indexPath,
+    header: [
+      { id: 'countryCode', title: 'Country Code' },
+      { id: 'seriesCode', title: 'Series Code' }
+    ]
+  });
+  
+  const sortedIndex = [...fileIndex].sort((a, b) => 
+    a.countryCode.localeCompare(b.countryCode) || a.seriesCode.localeCompare(b.seriesCode)
+  );
+  await indexWriter.writeRecords(sortedIndex);
+
+  console.log(`Created optimized metadata files:`);
+  console.log(`📊 Countries lookup: ${countriesPath} (${countriesRecords.length} entries)`);
+  console.log(`📊 Series lookup: ${seriesPath} (${seriesRecords.length} entries)`);
+  console.log(`📊 File index: ${indexPath} (${fileIndex.length} entries)`);
+  
+  // Calculate space savings
+  const originalSize = fileIndex.length * (50 + 50 + 100 + 50); // Rough estimate of original row size
+  const newSize = countriesRecords.length * 100 + seriesRecords.length * 150 + fileIndex.length * 20;
+  const savingsPercent = Math.round((1 - newSize / originalSize) * 100);
+  console.log(`💾 Estimated space savings: ${savingsPercent}%`);
+
+  // Create a README file explaining the optimized structure
+  const readmePath = path.join(outputDir, '_README.md');
+  const readmeContent = `# Optimized World Bank Data Structure
+
+## File Organization
+
+This directory contains World Bank data split into individual CSV files, with optimized metadata structure:
+
+### Data Files
+- **Pattern**: \`{country-code}-{series-code}.csv\`
+- **Example**: \`arg-nygdppcapkd.csv\` (Argentina GDP per capita)
+- **Content**: Each file contains yearly data for one country-series combination
+
+### Metadata Files
+
+#### \`_countries.csv\`
+Lookup table for all countries in the dataset:
+- **Country Code**: 3-letter ISO country code
+- **Country Name**: Full country name
+
+#### \`_series.csv\`
+Lookup table for all data series in the dataset:
+- **Series Code**: World Bank series identifier
+- **Series Name**: Human-readable description of the data series
+
+#### \`_index.csv\`
+Index of all available country-series combinations:
+- **Country Code**: Reference to countries table
+- **Series Code**: Reference to series table
+
+## Benefits of This Structure
+
+1. **Space Efficiency**: Eliminates redundant storage of country and series names
+2. **Predictable Filenames**: Use \`getFilenameFromCodes(countryCode, seriesCode)\`
+3. **Easy Filtering**: Query specific countries or series from the index
+4. **Normalized Data**: Country and series information stored once
+
+## Usage Examples
+
+### Find all series for a country:
+\`\`\`bash
+grep "^ARG," _index.csv
+\`\`\`
+
+### Find all countries with GDP data:
+\`\`\`bash
+grep "NY.GDP" _index.csv
+\`\`\`
+
+### Get country name from code:
+\`\`\`bash
+grep "^ARG," _countries.csv
+\`\`\`
+
+### Generate filename programmatically:
+\`\`\`typescript
+const filename = \`\${countryCode.toLowerCase()}-\${seriesCode.toLowerCase().replace(/[^a-z0-9]/g, '')}.csv\`;
+\`\`\`
+`;
+
+  await fs.writeFile(readmePath, readmeContent, 'utf8');
+  console.log(`📖 Created documentation: ${readmePath}`);
 }
 
 /**
@@ -143,7 +266,8 @@ async function splitWorldBankData(inputFile: string, outputDir: string): Promise
       .pipe(csv())
       .on('headers', (headers: string[]) => {
         // Extract year columns (they follow the pattern like "1960 [YR1960]")
-        yearColumns.push(...headers.filter(header => header.match(/\d{4} \[YR\d{4}\]/)));
+        const yearPattern = /\d{4} \[YR\d{4}\]/;
+        yearColumns.push(...headers.filter(header => yearPattern.test(header)));
         console.log(`Found ${yearColumns.length} year columns from ${headers[4]} to ${headers[headers.length - 1]}`);
       })
       .on('data', (row: WorldBankRow) => {
@@ -172,7 +296,7 @@ async function splitWorldBankData(inputFile: string, outputDir: string): Promise
         console.log(`Finished reading ${rowCount} rows. Creating ${processedData.size} individual files...`);
 
         let fileCount = 0;
-        for (const [key, data] of processedData) {
+        for (const [, data] of Array.from(processedData.entries())) {
           await writeCountryDatasetFile(
             outputDir,
             data.countryCode,
@@ -187,7 +311,7 @@ async function splitWorldBankData(inputFile: string, outputDir: string): Promise
           }
         }
 
-        await createMetadataFile(outputDir, processedData);
+        await createOptimizedMetadataFiles(outputDir, processedData);
 
         console.log(`\n✅ Successfully split dataset into ${fileCount} files!`);
         console.log(`📁 Output directory: ${outputDir}`);

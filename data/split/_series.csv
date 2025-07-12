@@ -1,0 +1,146 @@
+Series Code,Series Name
+,
+AG.CON.FERT.ZS,Fertilizer consumption (kilograms per hectare of arable land)
+BM.KLT.DINV.WD.GD.ZS,"Foreign direct investment, net outflows (% of GDP)"
+BX.KLT.DINV.WD.GD.ZS,"Foreign direct investment, net inflows (% of GDP)"
+DT.DOD.DSTC.IR.ZS,Short-term debt (% of total reserves)
+DT.DOD.DSTC.XP.ZS,"Short-term debt (% of exports of goods, services and primary income)"
+DT.DOD.DSTC.ZS,Short-term debt (% of total external debt)
+DT.TDS.DECT.EX.ZS,"Total debt service (% of exports of goods, services and primary income)"
+DT.TDS.DECT.GN.ZS,Total debt service (% of GNI)
+EG.ELC.RNEW.ZS,Renewable electricity output (% of total electricity output)
+EG.ELC.RNWX.KH,"Electricity production from renewable sources, excluding hydroelectric (kWh)"
+EG.ELC.RNWX.ZS,"Electricity production from renewable sources, excluding hydroelectric (% of total)"
+EG.FEC.RNEW.ZS,Renewable energy consumption (% of total final energy consumption)
+EG.GDP.PUSE.KO.PP,GDP per unit of energy use (PPP $ per kg of oil equivalent)
+EG.GDP.PUSE.KO.PP.KD,GDP per unit of energy use (constant 2021 PPP $ per kg of oil equivalent)
+EG.USE.COMM.GD.PP.KD,"Energy use (kg of oil equivalent) per $1,000 GDP (constant 2021 PPP)"
+EG.USE.CRNW.ZS,Combustible renewables and waste (% of total energy)
+EG.USE.ELEC.KH.PC,Electric power consumption (kWh per capita)
+EG.USE.PCAP.KG.OE,Energy use (kg of oil equivalent per capita)
+EN.CLC.MDAT.ZS,"Droughts, floods, extreme temperatures (% of population, average 1990-2009)"
+EN.GHG.CO2.AG.MT.CE.AR5,Carbon dioxide (CO2) emissions from Agriculture (Mt CO2e)
+EN.GHG.CO2.BU.MT.CE.AR5,Carbon dioxide (CO2) emissions from Building (Energy) (Mt CO2e)
+EN.GHG.CO2.FE.MT.CE.AR5,Carbon dioxide (CO2) emissions from Fugitive Emissions (Energy) (Mt CO2e)
+EN.GHG.CO2.IC.MT.CE.AR5,Carbon dioxide (CO2) emissions from Industrial Combustion (Energy) (Mt CO2e)
+EN.GHG.CO2.IP.MT.CE.AR5,Carbon dioxide (CO2) emissions from Industrial Processes (Mt CO2e)
+EN.GHG.CO2.LU.DF.MT.CE.AR5,Carbon dioxide (CO2) net fluxes from LULUCF - Deforestation (Mt CO2e)
+EN.GHG.CO2.LU.FL.MT.CE.AR5,Carbon dioxide (CO2) net fluxes from LULUCF - Forest Land (Mt CO2e)
+EN.GHG.CO2.LU.MT.CE.AR5,Carbon dioxide (CO2) net fluxes from LULUCF - Total excluding non-tropical fires (Mt CO2e)
+EN.GHG.CO2.LU.OL.MT.CE.AR5,Carbon dioxide (CO2) net fluxes from LULUCF - Other Land (Mt CO2e)
+EN.GHG.CO2.MT.CE.AR5,Carbon dioxide (CO2) emissions (total) excluding LULUCF (Mt CO2e)
+EN.GHG.CO2.PC.CE.AR5,Carbon dioxide (CO2) emissions excluding LULUCF per capita (t CO2e/capita)
+EN.GHG.CO2.PI.MT.CE.AR5,Carbon dioxide (CO2) emissions from Power Industry (Energy) (Mt CO2e)
+EN.GHG.CO2.RT.GDP.KD,Carbon intensity of GDP (kg CO2e per constant 2015 US$ of GDP)
+EN.GHG.CO2.RT.GDP.PP.KD,Carbon intensity of GDP (kg CO2e per 2021 PPP $ of GDP)
+EN.GHG.CO2.TR.MT.CE.AR5,Carbon dioxide (CO2) emissions from Transport (Energy) (Mt CO2e)
+EN.GHG.CO2.WA.MT.CE.AR5,Carbon dioxide (CO2) emissions from Waste (Mt CO2e)
+EN.GHG.CO2.ZG.AR5,Carbon dioxide (CO2) emissions (total) excluding LULUCF (% change from 1990)
+ER.H2O.INTR.K3,"Renewable internal freshwater resources, total (billion cubic meters)"
+ER.H2O.INTR.PC,Renewable internal freshwater resources per capita (cubic meters)
+FI.RES.TOTL.DT.ZS,Total reserves (% of total external debt)
+FP.CPI.TOTL.ZG,"Inflation, consumer prices (annual %)"
+GC.DOD.TOTL.CN,"Central government debt, total (current LCU)"
+GC.DOD.TOTL.GD.ZS,"Central government debt, total (% of GDP)"
+IT.MLT.MAIN.P2,Fixed telephone subscriptions (per 100 people)
+IT.NET.BBND.P2,Fixed broadband subscriptions (per 100 people)
+MS.MIL.TOTL.TF.ZS,Armed forces personnel (% of total labor force)
+NE.CON.GOVT.ZS,General government final consumption expenditure (% of GDP)
+NE.CON.TOTL.ZS,Final consumption expenditure (% of GDP)
+NE.DAB.TOTL.ZS,Gross national expenditure (% of GDP)
+NE.GDI.FPRV.ZS,"Gross fixed capital formation, private sector (% of GDP)"
+NE.GDI.FTOT.ZS,Gross fixed capital formation (% of GDP)
+NE.GDI.TOTL.ZS,Gross capital formation (% of GDP)
+NY.ADJ.DCO2.CD,Adjusted savings: carbon dioxide damage (current US$)
+NY.ADJ.DCO2.GN.ZS,Adjusted savings: carbon dioxide damage (% of GNI)
+NY.GDP.DEFL.KD.ZG,"Inflation, GDP deflator (annual %)"
+NY.GDP.DEFL.KD.ZG.AD,"Inflation, GDP deflator: linked series (annual %)"
+NY.GDP.FCST.CD,Gross value added at basic prices (GVA) (current US$)
+NY.GDP.FCST.CN,Gross value added at basic prices (GVA) (current LCU)
+NY.GDP.FCST.KD,Gross value added at basic prices (GVA) (constant 2015 US$)
+NY.GDP.FCST.KN,Gross value added at basic prices (GVA) (constant LCU)
+NY.GDP.FRST.RT.ZS,Forest rents (% of GDP)
+NY.GDP.MKTP.CD,GDP (current US$)
+NY.GDP.MKTP.CN,GDP (current LCU)
+NY.GDP.MKTP.KD,GDP (constant 2015 US$)
+NY.GDP.MKTP.KD.ZG,GDP growth (annual %)
+NY.GDP.MKTP.KN,GDP (constant LCU)
+NY.GDP.MKTP.PP.CD,"GDP, PPP (current international $)"
+NY.GDP.MKTP.PP.KD,"GDP, PPP (constant 2021 international $)"
+NY.GDP.PCAP.CD,GDP per capita (current US$)
+NY.GDP.PCAP.CN,GDP per capita (current LCU)
+NY.GDP.PCAP.KD,GDP per capita (constant 2015 US$)
+NY.GDP.PCAP.KD.ZG,GDP per capita growth (annual %)
+NY.GDP.PCAP.KN,GDP per capita (constant LCU)
+NY.GDP.PCAP.PP.CD,"GDP per capita, PPP (current international $)"
+NY.GDP.PCAP.PP.KD,"GDP per capita, PPP (constant 2021 international $)"
+NY.GDS.TOTL.ZS,Gross domestic savings (% of GDP)
+NY.GNP.PCAP.CD,"GNI per capita, Atlas method (current US$)"
+NY.GNP.PCAP.CN,GNI per capita (current LCU)
+NY.GNP.PCAP.KD,GNI per capita (constant 2015 US$)
+NY.GNP.PCAP.KD.ZG,GNI per capita growth (annual %)
+NY.GNP.PCAP.KN,GNI per capita (constant LCU)
+NY.GNP.PCAP.PP.CD,"GNI per capita, PPP (current international $)"
+NY.GNP.PCAP.PP.KD,"GNI per capita, PPP (constant 2021 international $)"
+NY.GNS.ICTR.ZS,Gross savings (% of GDP)
+SE.XPD.PRIM.PC.ZS,"Government expenditure per student, primary (% of GDP per capita)"
+SE.XPD.SECO.PC.ZS,"Government expenditure per student, secondary (% of GDP per capita)"
+SE.XPD.TERT.PC.ZS,"Government expenditure per student, tertiary (% of GDP per capita)"
+SE.XPD.TOTL.GD.ZS,"Government expenditure on education, total (% of GDP)"
+SH.MMR.RISK,Lifetime risk of maternal death (1 in: rate varies by country)
+SH.MMR.RISK.ZS,Lifetime risk of maternal death (%)
+SH.XPD.EHEX.PP.CD,"External health expenditure per capita, PPP (current international $)"
+SL.GDP.PCAP.EM.KD,GDP per person employed (constant 2021 PPP $)
+SL.TLF.ACTI.1524.FE.NE.ZS,"Labor force participation rate for ages 15-24, female (%) (national estimate)"
+SL.TLF.ACTI.1524.FE.ZS,"Labor force participation rate for ages 15-24, female (%) (modeled ILO estimate)"
+SL.TLF.ACTI.1524.MA.NE.ZS,"Labor force participation rate for ages 15-24, male (%) (national estimate)"
+SL.TLF.ACTI.1524.MA.ZS,"Labor force participation rate for ages 15-24, male (%) (modeled ILO estimate)"
+SL.TLF.ACTI.1524.NE.ZS,"Labor force participation rate for ages 15-24, total (%) (national estimate)"
+SL.TLF.ACTI.1524.ZS,"Labor force participation rate for ages 15-24, total (%) (modeled ILO estimate)"
+SL.TLF.ACTI.FE.ZS,"Labor force participation rate, female (% of female population ages 15-64) (modeled ILO estimate)"
+SL.TLF.ACTI.MA.ZS,"Labor force participation rate, male (% of male population ages 15-64) (modeled ILO estimate)"
+SL.TLF.ACTI.ZS,"Labor force participation rate, total (% of total population ages 15-64) (modeled ILO estimate)"
+SL.TLF.ADVN.FE.ZS,"Labor force with advanced education, female (% of female working-age population with advanced education)"
+SL.TLF.ADVN.MA.ZS,"Labor force with advanced education, male (% of male working-age population with advanced education)"
+SL.TLF.ADVN.ZS,Labor force with advanced education (% of total working-age population with advanced education)
+SL.TLF.BASC.FE.ZS,"Labor force with basic education, female (% of female working-age population with basic education)"
+SL.TLF.BASC.MA.ZS,"Labor force with basic education, male (% of male working-age population with basic education)"
+SL.TLF.BASC.ZS,Labor force with basic education (% of total working-age population with basic education)
+SL.TLF.CACT.FE.NE.ZS,"Labor force participation rate, female (% of female population ages 15+) (national estimate)"
+SL.TLF.CACT.FE.ZS,"Labor force participation rate, female (% of female population ages 15+) (modeled ILO estimate)"
+SL.TLF.CACT.FM.NE.ZS,Ratio of female to male labor force participation rate (%) (national estimate)
+SL.TLF.CACT.FM.ZS,Ratio of female to male labor force participation rate (%) (modeled ILO estimate)
+SL.TLF.CACT.MA.NE.ZS,"Labor force participation rate, male (% of male population ages 15+) (national estimate)"
+SL.TLF.CACT.MA.ZS,"Labor force participation rate, male (% of male population ages 15+) (modeled ILO estimate)"
+SL.TLF.CACT.NE.ZS,"Labor force participation rate, total (% of total population ages 15+) (national estimate)"
+SL.TLF.CACT.ZS,"Labor force participation rate, total (% of total population ages 15+) (modeled ILO estimate)"
+SL.TLF.INTM.FE.ZS,"Labor force with intermediate education, female (% of female working-age population with intermediate education)"
+SL.TLF.INTM.MA.ZS,"Labor force with intermediate education, male (% of male working-age population with intermediate education)"
+SL.TLF.INTM.ZS,Labor force with intermediate education (% of total working-age population with intermediate education)
+SL.TLF.TOTL.FE.ZS,"Labor force, female (% of total labor force)"
+SL.TLF.TOTL.IN,"Labor force, total"
+SL.UEM.1524.FE.NE.ZS,"Unemployment, youth female (% of female labor force ages 15-24) (national estimate)"
+SL.UEM.1524.FE.ZS,"Unemployment, youth female (% of female labor force ages 15-24) (modeled ILO estimate)"
+SL.UEM.1524.MA.NE.ZS,"Unemployment, youth male (% of male labor force ages 15-24) (national estimate)"
+SL.UEM.1524.MA.ZS,"Unemployment, youth male (% of male labor force ages 15-24) (modeled ILO estimate)"
+SL.UEM.1524.NE.ZS,"Unemployment, youth total (% of total labor force ages 15-24) (national estimate)"
+SL.UEM.1524.ZS,"Unemployment, youth total (% of total labor force ages 15-24) (modeled ILO estimate)"
+SL.UEM.ADVN.FE.ZS,"Unemployment with advanced education, female (% of female labor force with advanced education)"
+SL.UEM.ADVN.MA.ZS,"Unemployment with advanced education, male (% of male labor force with advanced education)"
+SL.UEM.ADVN.ZS,Unemployment with advanced education (% of total labor force with advanced education)
+SL.UEM.BASC.FE.ZS,"Unemployment with basic education, female (% of female labor force with basic education)"
+SL.UEM.BASC.MA.ZS,"Unemployment with basic education, male (% of male labor force with basic education)"
+SL.UEM.BASC.ZS,Unemployment with basic education (% of total labor force with basic education)
+SL.UEM.INTM.FE.ZS,"Unemployment with intermediate education, female (% of female labor force with intermediate education)"
+SL.UEM.INTM.MA.ZS,"Unemployment with intermediate education, male (% of male labor force with intermediate education)"
+SL.UEM.INTM.ZS,Unemployment with intermediate education (% of total labor force with intermediate education)
+SL.UEM.TOTL.FE.NE.ZS,"Unemployment, female (% of female labor force) (national estimate)"
+SL.UEM.TOTL.FE.ZS,"Unemployment, female (% of female labor force) (modeled ILO estimate)"
+SL.UEM.TOTL.MA.NE.ZS,"Unemployment, male (% of male labor force) (national estimate)"
+SL.UEM.TOTL.MA.ZS,"Unemployment, male (% of male labor force) (modeled ILO estimate)"
+SL.UEM.TOTL.NE.ZS,"Unemployment, total (% of total labor force) (national estimate)"
+SL.UEM.TOTL.ZS,"Unemployment, total (% of total labor force) (modeled ILO estimate)"
+SP.DYN.LE00.FE.IN,"Life expectancy at birth, female (years)"
+SP.DYN.LE00.IN,"Life expectancy at birth, total (years)"
+SP.DYN.LE00.MA.IN,"Life expectancy at birth, male (years)"
+SP.DYN.TFRT.IN,"Fertility rate, total (births per woman)"
