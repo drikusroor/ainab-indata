@@ -173,8 +173,16 @@ export function useSeries() {
         const lines = csvText.trim().split('\n')
         
         const parseSeriesLine = (line: string) => {
-          const [code, name] = line.split(',').map(value => value.trim().replace(/"/g, ''))
-          return { code, name }
+          // Use RegExp.exec() and explicit grouping for quotes
+          const regex = /^([^,]+),(".*"|.*)$/;
+          const match = regex.exec(line);
+          let code = '', name = '';
+          if (match) {
+            code = match[1].trim().replace(/"/g, '');
+            // Remove leading/trailing quotes using explicit grouping
+            name = match[2].trim().replace(/^"(.*)"$/, '$1');
+          }
+          return { code, name };
         }
 
         return lines.slice(1)
