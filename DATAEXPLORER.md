@@ -5,26 +5,31 @@
 The DataExplorer has been enhanced to support:
 
 ### 🌍 Multi-Country Selection
+
 - Select multiple countries using the enhanced multi-select dropdown
 - Search and filter countries by name
 - Visual badges show selected countries with easy removal
 
 ### 📊 Data Series Selection  
+
 - Choose from 145+ World Bank development indicators
 - Searchable dropdown with full series names
 - Categories include GDP, population, climate, trade, and more
 
 ### 📈 Interactive Visualizations
+
 - **Line Charts**: Compare trends over time (1960-2024)
 - **Bar Charts**: Compare specific years across countries
 - Responsive Chart.js visualizations with hover tooltips
 
 ### 🔧 Chart Customization
+
 - Toggle between line and bar chart views
 - Select specific years for bar chart comparisons
 - Automatic color coding for different countries
 
 ### 📋 Data Table
+
 - Summary table showing latest values for each country
 - Data availability information (number of years with data)
 - Sortable and filterable data presentation
