@@ -5,6 +5,7 @@
 This directory contains World Bank data split into individual CSV files, with optimized metadata structure:
 
 ### Data Files
+
 - **Pattern**: `{country-code}-{series-code}.csv`
 - **Example**: `arg-nygdppcapkd.csv` (Argentina GDP per capita)
 - **Content**: Each file contains yearly data for one country-series combination
@@ -12,17 +13,23 @@ This directory contains World Bank data split into individual CSV files, with op
 ### Metadata Files
 
 #### `_countries.csv`
+
 Lookup table for all countries in the dataset:
+
 - **Country Code**: 3-letter ISO country code
 - **Country Name**: Full country name
 
 #### `_series.csv`
+
 Lookup table for all data series in the dataset:
+
 - **Series Code**: World Bank series identifier
 - **Series Name**: Human-readable description of the data series
 
 #### `_index.csv`
+
 Index of all available country-series combinations:
+
 - **Country Code**: Reference to countries table
 - **Series Code**: Reference to series table
 
@@ -35,22 +42,26 @@ Index of all available country-series combinations:
 
 ## Usage Examples
 
-### Find all series for a country:
+### Find all series for a country
+
 ```bash
 grep "^ARG," _index.csv
 ```
 
-### Find all countries with GDP data:
+### Find all countries with GDP data
+
 ```bash
 grep "NY.GDP" _index.csv
 ```
 
-### Get country name from code:
+### Get country name from code
+
 ```bash
 grep "^ARG," _countries.csv
 ```
 
-### Generate filename programmatically:
+### Generate filename programmatically
+
 ```typescript
 const filename = `${countryCode.toLowerCase()}-${seriesCode.toLowerCase().replace(/[^a-z0-9]/g, '')}.csv`;
 ```

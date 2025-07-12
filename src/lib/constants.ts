@@ -25,8 +25,3 @@ export const GITHUB_RAW_BASE_URL = `https://raw.githubusercontent.com/${GITHUB_C
 export function getDataFileUrl(filename: string): string {
   return `${GITHUB_RAW_BASE_URL}/${filename}`
 }
-
-/**
- * URL for the metadata file that lists all available datasets
- */
-export const METADATA_FILE_URL = getDataFileUrl('_metadata.csv')
