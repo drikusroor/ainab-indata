@@ -112,9 +112,9 @@ export function DataExplorer() {
             Compare development indicators across multiple countries
           </p>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 w-full max-w-none p-0">
           {/* Main selectors in responsive grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
             {/* Country Selection */}
             <div className="space-y-2">
               <label htmlFor="country-select" className="text-sm font-medium">
@@ -196,35 +196,35 @@ export function DataExplorer() {
               Comparing {selectedCountries.length} countries
             </p>
           </CardHeader>
-          <CardContent>
-            <Tabs value={displayMode} onValueChange={(value) => setDisplayMode(value as "visualization" | "table" | "side-by-side")}>
+          <CardContent className="w-full max-w-none p-0">
+            <Tabs value={displayMode} onValueChange={(value) => setDisplayMode(value as "visualization" | "table" | "side-by-side")}> 
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="visualization">Visualization</TabsTrigger>
                 <TabsTrigger value="table">Table</TabsTrigger>
                 <TabsTrigger value="side-by-side">Side-by-Side</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="visualization" className="mt-4">
-                <div className="w-full h-96">
+              <TabsContent value="visualization" className="mt-4 w-full">
+                <div className="w-full h-96 max-w-none">
                   {renderDataVisualization()}
                 </div>
               </TabsContent>
               
-              <TabsContent value="table" className="mt-4">
+              <TabsContent value="table" className="mt-4 w-full">
                 {multiCountryData && <DataTable data={multiCountryData} />}
               </TabsContent>
               
-              <TabsContent value="side-by-side" className="mt-4">
+              <TabsContent value="side-by-side" className="mt-4 w-full">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium">Visualization</h4>
-                    <div className="w-full h-80">
+                    <div className="w-full h-80 max-w-none">
                       {renderDataVisualization()}
                     </div>
                   </div>
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium">Data Table</h4>
-                    <div className="max-h-80 overflow-auto">
+                    <div className="max-h-80 overflow-auto w-full">
                       {multiCountryData && <DataTable data={multiCountryData} />}
                     </div>
                   </div>
