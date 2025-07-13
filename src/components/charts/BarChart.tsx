@@ -26,7 +26,7 @@ interface BarChartProps {
   readonly year?: number // Specific year to show, or latest available
 }
 
-export function BarChart({ data, title, seriesName, year }: BarChartProps) {
+export function BarChart({ data, title, seriesName }: BarChartProps) {
   // Generate colors for different countries
   const colors = [
     'rgb(255, 99, 132)',
@@ -39,28 +39,35 @@ export function BarChart({ data, title, seriesName, year }: BarChartProps) {
     'rgb(83, 102, 147)',
   ]
 
-  // Get data for the specified year or latest available
+  // Get all unique years across all countries
+  const allYears = new Set<number>()
+  data.forEach(countryData => {
+    countryData.data.forEach(point => {
+      if (point.value !== null) {
+        allYears.add(point.year)
+      }
+    })
+  })
+  const sortedYears = Array.from(allYears).sort((a, b) => a - b)
+
+  // Each country is a dataset, each year is a label
   const chartData = {
-    labels: data.map(countryData => countryData.country.name),
-    datasets: [{
-      label: year ? `${year}` : 'Latest Available',
-      data: data.map(countryData => {
-        if (year) {
-          // Find data for specific year
-          const point = countryData.data.find(p => p.year === year)
-          return point?.value ?? null
-        } else {
-          // Find latest available data
-          const sortedData = countryData.data
-            .filter(p => p.value !== null)
-            .sort((a, b) => b.year - a.year)
-          return sortedData[0]?.value ?? null
-        }
-      }),
-      backgroundColor: colors.map((color, index) => color + '80'), // Add transparency
-      borderColor: colors,
-      borderWidth: 1,
-    }]
+    labels: sortedYears,
+    datasets: data.map((countryData, index) => {
+      // Create a value array aligned with sortedYears
+      const values = sortedYears.map(year => {
+        const point = countryData.data.find(p => p.year === year)
+        return point?.value ?? null
+      })
+      return {
+        label: countryData.country.name,
+        data: values,
+        backgroundColor: colors[index % colors.length] + '80',
+        borderColor: colors[index % colors.length],
+        borderWidth: 1,
+        stack: 'countries',
+      }
+    })
   }
 
   const options = {
@@ -75,9 +82,17 @@ export function BarChart({ data, title, seriesName, year }: BarChartProps) {
       },
     },
     scales: {
+      x: {
+        stacked: true,
+      },
       y: {
+        stacked: true,
         beginAtZero: false,
       },
+    },
+    interaction: {
+      mode: 'index' as const,
+      intersect: false,
     },
   }
 
