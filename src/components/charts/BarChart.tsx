@@ -65,7 +65,7 @@ export function BarChart({ data, title, seriesName }: BarChartProps) {
         backgroundColor: colors[index % colors.length] + '80',
         borderColor: colors[index % colors.length],
         borderWidth: 1,
-        stack: 'countries',
+        // Removed stack property to create grouped bars
       }
     })
   }
@@ -83,10 +83,10 @@ export function BarChart({ data, title, seriesName }: BarChartProps) {
     },
     scales: {
       x: {
-        stacked: true,
+        // Removed stacked: true to allow grouped bars
       },
       y: {
-        stacked: true,
+        // Removed stacked: true to allow grouped bars
         beginAtZero: false,
       },
     },
