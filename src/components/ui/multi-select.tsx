@@ -40,9 +40,18 @@ export function MultiSelect({
     }
   }
 
-  const handleRemove = (value: string, event: React.MouseEvent) => {
+  const handleRemove = (value: string, event: React.MouseEvent | React.KeyboardEvent) => {
     event.stopPropagation()
     onSelectionChange(selected.filter(item => item !== value))
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      setOpen(!open)
+    } else if (event.key === 'Escape' && open) {
+      setOpen(false)
+    }
   }
 
   const selectedOptions = options.filter(option => selected.includes(option.value))
@@ -52,9 +61,13 @@ export function MultiSelect({
       <Button
         variant="outline"
         onClick={() => setOpen(!open)}
-        className={cn("justify-between min-h-10 w-full", className)}
+        onKeyDown={handleKeyDown}
+        className={cn("justify-between min-h-10 w-full cursor-pointer", className)}
         disabled={disabled}
         type="button"
+        tabIndex={0}
+        aria-expanded={open}
+        aria-haspopup="listbox"
       >
         <div className="flex flex-wrap gap-1 flex-1 text-left">
           {selectedOptions.length === 0 ? (
@@ -67,10 +80,22 @@ export function MultiSelect({
                   className="inline-flex items-center px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded"
                 >
                   {option.label}
-                  <X
-                    className="ml-1 h-3 w-3 cursor-pointer hover:text-destructive"
+                  <button
+                    type="button"
+                    tabIndex={0}
+                    className="ml-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-ring rounded"
                     onClick={(e) => handleRemove(option.value, e)}
-                  />
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleRemove(option.value, e)
+                      }
+                    }}
+                    aria-label={`Remove ${option.label}`}
+                  >
+                    <X className="h-3 w-3 hover:text-destructive" />
+                  </button>
                 </span>
               ))}
               {selectedOptions.length > 3 && (
@@ -94,15 +119,20 @@ export function MultiSelect({
               if (e.key === 'Escape') setOpen(false)
             }}
             aria-label="Close dropdown"
+            tabIndex={-1}
           />
-          <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-auto">
+          <div 
+            className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-auto"
+            aria-multiselectable="true"
+          >
             <div className="p-2">
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchTerm}
-                className="w-full px-3 py-2 text-sm border border-border rounded focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full px-3 py-2 text-sm border border-border rounded focus:outline-none focus:ring-2 focus:ring-ring cursor-text"
                 onChange={(e) => setSearchTerm(e.target.value)}
+                tabIndex={0}
               />
             </div>
             <div className="py-1">
@@ -110,8 +140,16 @@ export function MultiSelect({
                 <button
                   key={option.value}
                   type="button"
-                  className="w-full flex items-center px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                  className="w-full flex items-center px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer focus:outline-none focus:bg-accent focus:text-accent-foreground"
                   onClick={() => handleSelect(option.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      handleSelect(option.value)
+                    }
+                  }}
+                  tabIndex={0}
+                  aria-selected={selected.includes(option.value)}
                 >
                   <Check
                     className={cn(

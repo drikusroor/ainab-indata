@@ -18,7 +18,7 @@ export function App() {
           href="https://data.worldbank.org/"
           target="_blank"
           rel="noopener noreferrer"
-          className="underline ml-1"
+          className="underline ml-1 cursor-pointer hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded"
         >
           https://data.worldbank.org/
         </a>

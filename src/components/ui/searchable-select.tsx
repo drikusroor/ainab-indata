@@ -38,6 +38,15 @@ export function SearchableSelect({
     setSearchTerm('')
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      setOpen(!open)
+    } else if (event.key === 'Escape' && open) {
+      setOpen(false)
+    }
+  }
+
   const selectedOption = options.find(option => option.value === selected)
 
   return (
@@ -45,9 +54,13 @@ export function SearchableSelect({
       <Button
         variant="outline"
         onClick={() => setOpen(!open)}
-        className={cn("justify-between min-h-10 w-full", className)}
+        onKeyDown={handleKeyDown}
+        className={cn("justify-between min-h-10 w-full cursor-pointer", className)}
         disabled={disabled}
         type="button"
+        tabIndex={0}
+        aria-expanded={open}
+        aria-haspopup="listbox"
       >
         <div className="flex-1 text-left">
           {selectedOption ? (
@@ -69,15 +82,19 @@ export function SearchableSelect({
               if (e.key === 'Escape') setOpen(false)
             }}
             aria-label="Close dropdown"
+            tabIndex={-1}
           />
-          <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-auto">
+          <div 
+            className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-auto"
+          >
             <div className="p-2">
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchTerm}
-                className="w-full px-3 py-2 text-sm border border-border rounded focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full px-3 py-2 text-sm border border-border rounded focus:outline-none focus:ring-2 focus:ring-ring cursor-text"
                 onChange={(e) => setSearchTerm(e.target.value)}
+                tabIndex={0}
               />
             </div>
             <div className="py-1">
@@ -85,8 +102,16 @@ export function SearchableSelect({
                 <button
                   key={option.value}
                   type="button"
-                  className="w-full flex items-start px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                  className="w-full flex items-start px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer focus:outline-none focus:bg-accent focus:text-accent-foreground"
                   onClick={() => handleSelect(option.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      handleSelect(option.value)
+                    }
+                  }}
+                  tabIndex={0}
+                  aria-selected={selected === option.value}
                 >
                   <Check
                     className={cn(
