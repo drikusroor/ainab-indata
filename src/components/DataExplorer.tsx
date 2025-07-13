@@ -50,10 +50,11 @@ export function DataExplorer() {
     label: country.name
   })) || []
 
-  const seriesOptions = series?.map(s => ({
+  // Sort seriesOptions alphabetically by label
+  const seriesOptions = (series?.map(s => ({
     value: s.code,
     label: s.name
-  })) || []
+  })) || []).sort((a, b) => a.label.localeCompare(b.label))
 
   // Get available years for comparison
   const availableYears = multiCountryData
