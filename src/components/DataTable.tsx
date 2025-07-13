@@ -6,33 +6,25 @@ interface DataTableProps {
 
 export function DataTable({ data }: DataTableProps) {
   return (
-    <div className="overflow-auto max-h-64">
+    <div className="overflow-auto max-h-96">
       <table className="w-full text-sm">
         <thead className="bg-muted/50">
           <tr>
             <th className="p-2 text-left border-b">Country</th>
-            <th className="p-2 text-left border-b">Latest Value</th>
-            <th className="p-2 text-left border-b">Latest Year</th>
-            <th className="p-2 text-left border-b">Data Points</th>
+            <th className="p-2 text-left border-b">Year</th>
+            <th className="p-2 text-left border-b">Value</th>
           </tr>
         </thead>
         <tbody>
-          {data.map(countryData => {
-            const validData = countryData.data.filter(point => point.value !== null)
-            const sortedData = [...validData].sort((a, b) => b.year - a.year)
-            const latestData = sortedData[0]
-            
-            return (
-              <tr key={countryData.country.code} className="border-b">
+          {data.map(countryData =>
+            countryData.data.map(point => (
+              <tr key={countryData.country.code + '-' + point.year} className="border-b">
                 <td className="p-2 font-medium">{countryData.country.name}</td>
-                <td className="p-2">
-                  {latestData?.value?.toLocaleString() || 'No data'}
-                </td>
-                <td className="p-2">{latestData?.year || 'N/A'}</td>
-                <td className="p-2">{validData.length} years</td>
+                <td className="p-2">{point.year}</td>
+                <td className="p-2">{point.value !== null ? point.value.toLocaleString() : 'No data'}</td>
               </tr>
-            )
-          })}
+            ))
+          )}
         </tbody>
       </table>
     </div>
