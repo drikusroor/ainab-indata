@@ -1,6 +1,10 @@
 # AINAB InData - World Bank Development Indicators Dashboard
 
+[![Deploy Ainab's InData to GH Pages](https://github.com/drikusroor/ainab-indata/actions/workflows/deploy.yml/badge.svg)](https://github.com/drikusroor/ainab-indata/actions/workflows/deploy.yml)
+
 A modern React application for exploring and visualizing World Bank development indicators data, built with a high-performance tech stack and optimized data processing pipeline.
+
+[Check it out!](drikusroor.github.io/ainab-indata/)
 
 ## 🎯 Project Overview
 
