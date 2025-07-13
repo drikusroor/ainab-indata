@@ -6,7 +6,7 @@ When working on a GitHub ticket (issue or pull request) with a ticket number,
 and you believe you have finished the task, you must always propose to commit
 the relevant changes with a clear, descriptive commit message that includes:
 "Closes #{ticketNumber}" (where ticketNumber is the number of the ticket).
-This ensures the ticket is automatically closed when the commit is pushed.
+This ensures the ticket is automatically closed when the commit is pushed. If there is no ticket number to close, you can simply commit without the "Closes" part.
 
 In short, execute the following steps:
 
