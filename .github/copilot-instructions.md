@@ -16,6 +16,8 @@ In short, execute the following steps:
    (e.g., "Closes #42" if the ticket number is 42).
 4. Commit your changes: `git commit -m "Your commit message here"`.
 
+You can do this for me by proposing terminal commands to me.
+
 ### Example
 
 If you finish work for ticket #42, your commit message should include: "Closes #42"
