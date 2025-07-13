@@ -4,6 +4,7 @@ import {
   useSeries, 
   useMultiCountryData
 } from "@/lib/hooks/use-worldbank-data"
+import { DATA_EXPLORER_CONFIG } from "@/lib/config"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
@@ -16,13 +17,14 @@ import { DataTable } from "@/components/DataTable"
 /**
  * Enhanced Data Explorer component for multi-country comparison
  * Supports country selection, series selection, and data visualization
+ * Uses configurable defaults for initial state
  */
 export function DataExplorer() {
-  const [selectedCountries, setSelectedCountries] = useState<string[]>(['USA', 'CHN', 'DEU'])
-  const [selectedSeries, setSelectedSeries] = useState<string>("NY.GDP.MKTP.CD")
-  const [chartType, setChartType] = useState<"line" | "bar">("line")
-  const [compareYear, setCompareYear] = useState<number>(2023)
-  const [displayMode, setDisplayMode] = useState<"visualization" | "table" | "side-by-side">("visualization")
+  const [selectedCountries, setSelectedCountries] = useState<string[]>([...DATA_EXPLORER_CONFIG.defaultCountries])
+  const [selectedSeries, setSelectedSeries] = useState<string>(DATA_EXPLORER_CONFIG.defaultSeries)
+  const [chartType, setChartType] = useState<"line" | "bar">(DATA_EXPLORER_CONFIG.defaultChartType)
+  const [compareYear, setCompareYear] = useState<number>(DATA_EXPLORER_CONFIG.defaultCompareYear)
+  const [displayMode, setDisplayMode] = useState<"visualization" | "table" | "side-by-side">(DATA_EXPLORER_CONFIG.defaultDisplayMode)
 
   // Fetch metadata
   const { 
