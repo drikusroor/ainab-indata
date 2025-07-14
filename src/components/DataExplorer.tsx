@@ -198,7 +198,7 @@ export function DataExplorer() {
               Comparing {selectedCountries.length} countries
             </p>
           </CardHeader>
-          <CardContent className="w-full max-w-none p-0">
+          <CardContent className="w-full max-w-none p-3">
             <Tabs value={displayMode} onValueChange={(value) => setDisplayMode(value as "visualization" | "table" | "side-by-side")}> 
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="visualization">Visualization</TabsTrigger>
