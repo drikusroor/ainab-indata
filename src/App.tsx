@@ -12,7 +12,7 @@ export function App() {
         </div>
       </div>
       {/* Data source credit */}
-      <footer className="mt-12 text-center text-sm text-muted-foreground">
+      <footer className="mt-12 text-center text-sm text-foreground mb-1">
         Data source: World Bank –
         <a
           href="https://data.worldbank.org/"
