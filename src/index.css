@@ -21,10 +21,8 @@ body::before {
   pointer-events: none;
   /* Creative gradient background with subtle pattern overlay */
   background:
-    linear-gradient(120deg, #7f7fd5 0%, #86a8e7 50%, #91eac9 100%),
-    url("./logo.svg") center/256px no-repeat;
+    linear-gradient(120deg, #7f7fd5 0%, #86a8e7 50%, #91eac9 100%);
   background-blend-mode: lighten;
-  filter: blur(8px) brightness(0.95) saturate(1.2);
   animation: gradient-move 24s ease-in-out infinite;
 }
 
