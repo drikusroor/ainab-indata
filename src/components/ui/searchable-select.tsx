@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { fuzzyFilterAndSort } from '@/lib/fuzzySearch'
 
 interface Option {
   readonly value: string
@@ -35,9 +36,9 @@ export function SearchableSelect({
     }
   }, [open])
 
-  const filteredOptions = options.filter(option =>
-    option.label.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredOptions = searchTerm
+    ? fuzzyFilterAndSort(options, searchTerm)
+    : options
 
   const handleSelect = (value: string) => {
     onSelectionChange(value)

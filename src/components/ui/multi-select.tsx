@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { Check, ChevronDown, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { fuzzyFilterAndSort } from '@/lib/fuzzySearch'
+
 
 interface Option {
   readonly value: string
@@ -38,9 +40,9 @@ export function MultiSelect({
     }
   }, [open])
 
-  const filteredOptions = options.filter(option =>
-    option.label.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredOptions = searchTerm
+    ? fuzzyFilterAndSort(options, searchTerm)
+    : options
 
   const handleSelect = (value: string) => {
     if (selected.includes(value)) {
