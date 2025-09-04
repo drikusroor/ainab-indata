@@ -38,6 +38,8 @@ export function MultiSelect({
     } else {
       onSelectionChange([...selected, value])
     }
+    // Reset search after each selection to show full list again
+    setSearchTerm('')
   }
 
   const handleRemove = (value: string, event: React.MouseEvent | React.KeyboardEvent) => {
@@ -123,7 +125,6 @@ export function MultiSelect({
           />
           <div 
             className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-auto"
-            aria-multiselectable="true"
           >
             <div className="p-2">
               <input
@@ -149,7 +150,7 @@ export function MultiSelect({
                     }
                   }}
                   tabIndex={0}
-                  aria-selected={selected.includes(option.value)}
+                  aria-pressed={selected.includes(option.value)}
                 >
                   <Check
                     className={cn(
