@@ -93,9 +93,9 @@ export function SearchableSelect({
             tabIndex={-1}
           />
           <div 
-            className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-auto"
+            className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg"
           >
-            <div className="p-2">
+            <div className="p-2 border-b border-border">
               <input
                 ref={searchInputRef}
                 type="text"
@@ -106,7 +106,7 @@ export function SearchableSelect({
                 tabIndex={0}
               />
             </div>
-            <div className="py-1">
+            <div className="py-1 max-h-60 overflow-auto">
               {filteredOptions.map(option => (
                 <button
                   key={option.value}
