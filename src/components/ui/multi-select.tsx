@@ -83,21 +83,21 @@ export function MultiSelect({
         aria-expanded={open}
         aria-haspopup="listbox"
       >
-        <div className="flex flex-wrap gap-1 flex-1 text-left">
+        <div className="flex flex-wrap gap-1 flex-1 text-left overflow-hidden">
           {selectedOptions.length === 0 ? (
-            <span className="text-muted-foreground">{placeholder}</span>
+            <span className="text-muted-foreground truncate max-w-full">{placeholder}</span>
           ) : (
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1 overflow-hidden max-w-full">
               {selectedOptions.slice(0, 3).map(option => (
                 <span
                   key={option.value}
-                  className="inline-flex items-center px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded"
+                  className="inline-flex items-center px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded max-w-[140px]"
                 >
-                  {option.label}
+                  <span className="truncate max-w-[110px]">{option.label}</span>
                   <button
                     type="button"
                     tabIndex={0}
-                    className="ml-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-ring rounded"
+                    className="ml-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-ring rounded shrink-0"
                     onClick={(e) => handleRemove(option.value, e)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
@@ -113,7 +113,7 @@ export function MultiSelect({
                 </span>
               ))}
               {selectedOptions.length > 3 && (
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-muted-foreground truncate max-w-[80px]">
                   +{selectedOptions.length - 3} more
                 </span>
               )}

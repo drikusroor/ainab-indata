@@ -70,11 +70,11 @@ export function SearchableSelect({
         aria-expanded={open}
         aria-haspopup="listbox"
       >
-        <div className="flex-1 text-left">
+        <div className="flex-1 text-left overflow-hidden">
           {selectedOption ? (
-            <span>{selectedOption.label}</span>
+            <span className="block truncate">{selectedOption.label}</span>
           ) : (
-            <span className="text-muted-foreground">{placeholder}</span>
+            <span className="text-muted-foreground block truncate">{placeholder}</span>
           )}
         </div>
         <ChevronDown className="ml-2 h-4 w-4 shrink-0" />
