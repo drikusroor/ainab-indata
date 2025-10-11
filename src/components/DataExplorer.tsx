@@ -4,6 +4,7 @@ import {
 	useSeries,
 	useMultiCountryData,
 } from "@/lib/hooks/use-worldbank-data";
+import { usePercentageComparison } from "@/lib/hooks/use-percentage-comparison";
 import { DATA_EXPLORER_CONFIG } from "@/lib/config";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -15,12 +16,14 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, BarChart3 } from "lucide-react";
+import { TrendingUp, BarChart3, Percent } from "lucide-react";
 import { LineChart } from "@/components/charts/LineChart";
 import { BarChart } from "@/components/charts/BarChart";
+import { PercentageComparisonChart } from "@/components/charts/PercentageComparisonChart";
 import { CountrySelect } from "@/components/CountrySelect";
 import { SeriesSelect } from "@/components/SeriesSelect";
 import { DataTable } from "@/components/DataTable";
+import { PercentageComparisonTable } from "@/components/PercentageComparisonTable";
 
 /**
  * Enhanced Data Explorer component for multi-country comparison
@@ -34,7 +37,7 @@ export function DataExplorer() {
 	const [selectedSeries, setSelectedSeries] = useState<string>(
 		DATA_EXPLORER_CONFIG.defaultSeries,
 	);
-	const [chartType, setChartType] = useState<"line" | "bar">(
+	const [chartType, setChartType] = useState<"line" | "bar" | "percentage">(
 		DATA_EXPLORER_CONFIG.defaultChartType,
 	);
 	const [compareYear, setCompareYear] = useState<number>(
@@ -43,6 +46,9 @@ export function DataExplorer() {
 	const [displayMode, setDisplayMode] = useState<
 		"visualization" | "table" | "side-by-side"
 	>(DATA_EXPLORER_CONFIG.defaultDisplayMode);
+	const [baselineCountry, setBaselineCountry] = useState<string>(
+		DATA_EXPLORER_CONFIG.defaultCountries[0] || "USA"
+	);
 
 	// Fetch metadata
 	const {
@@ -63,6 +69,12 @@ export function DataExplorer() {
 		isLoading: dataLoading,
 		error: dataError,
 	} = useMultiCountryData(selectedCountries, selectedSeries);
+
+	// Get percentage comparison data
+	const percentageComparisonData = usePercentageComparison(
+		multiCountryData,
+		baselineCountry
+	);
 
 	// Transform data for dropdowns
 	const countryOptions =
@@ -93,6 +105,9 @@ export function DataExplorer() {
 	const selectedSeriesName = series?.find(
 		(s) => s.code === selectedSeries,
 	)?.name;
+	const baselineCountryName = countries?.find(
+		(c) => c.code === baselineCountry,
+	)?.name || baselineCountry;
 	const hasData =
 		selectedCountries.length > 0 && selectedSeries && multiCountryData;
 
@@ -123,15 +138,33 @@ export function DataExplorer() {
 			<div className="w-full h-96">
 				{chartType === "line" ? (
 					<LineChart data={multiCountryData} seriesName={selectedSeriesName} />
-				) : (
+				) : chartType === "bar" ? (
 					<BarChart
 						data={multiCountryData}
 						seriesName={selectedSeriesName}
 						year={compareYear}
 					/>
+				) : (
+					<PercentageComparisonChart
+						data={percentageComparisonData}
+						baselineCountryName={baselineCountryName}
+						seriesName={selectedSeriesName}
+					/>
 				)}
 			</div>
 		);
+	};
+
+	const renderDataTable = () => {
+		if (chartType === "percentage") {
+			return (
+				<PercentageComparisonTable
+					data={percentageComparisonData}
+					baselineCountryName={baselineCountryName}
+				/>
+			);
+		}
+		return multiCountryData && <DataTable data={multiCountryData} />;
 	};
 
 	return (
@@ -200,13 +233,23 @@ export function DataExplorer() {
 									<BarChart3 className="h-4 w-4" />
 									Bar Chart
 								</Button>
+								<Button
+									variant={chartType === "percentage" ? "default" : "ghost"}
+									size="sm"
+									onClick={() => setChartType("percentage")}
+									className="flex items-center gap-2 flex-1"
+									title="Compare countries as percentage of baseline"
+								>
+									<Percent className="h-4 w-4" />
+									% Compare
+								</Button>
 							</div>
 						</div>
 					</div>
 
 					{/* Additional Chart Options */}
-					{hasData && chartType === "bar" && availableYears.length > 0 && (
-						<div className="flex justify-start">
+					<div className="px-6 flex flex-wrap gap-6">
+						{hasData && chartType === "bar" && availableYears.length > 0 && (
 							<div className="space-y-2 w-32">
 								<label htmlFor="compare-year" className="text-sm font-medium">
 									Compare Year:
@@ -227,8 +270,37 @@ export function DataExplorer() {
 									</SelectContent>
 								</Select>
 							</div>
-						</div>
-					)}
+						)}
+
+						{hasData && chartType === "percentage" && (
+							<div className="space-y-2 w-48">
+								<label htmlFor="baseline-country" className="text-sm font-medium">
+									Baseline Country:
+								</label>
+								<Select
+									value={baselineCountry}
+									onValueChange={setBaselineCountry}
+								>
+									<SelectTrigger id="baseline-country">
+										<SelectValue />
+									</SelectTrigger>
+									<SelectContent>
+										{selectedCountries.map((countryCode) => {
+											const country = countries?.find(c => c.code === countryCode);
+											return (
+												<SelectItem key={countryCode} value={countryCode}>
+													{country?.name || countryCode}
+												</SelectItem>
+											);
+										})}
+									</SelectContent>
+								</Select>
+								<p className="text-xs text-muted-foreground">
+									Other countries will be shown as % of this country
+								</p>
+							</div>
+						)}
+					</div>
 				</CardContent>
 			</Card>
 
@@ -236,9 +308,17 @@ export function DataExplorer() {
 			{hasData && (
 				<Card>
 					<CardHeader>
-						<CardTitle>{selectedSeriesName}</CardTitle>
+						<CardTitle>
+							{chartType === "percentage" 
+								? `${selectedSeriesName} - Percentage Comparison` 
+								: selectedSeriesName
+							}
+						</CardTitle>
 						<p className="text-sm text-muted-foreground">
-							Comparing {selectedCountries.length} countries
+							{chartType === "percentage" 
+								? `Comparing ${selectedCountries.length} countries relative to ${baselineCountryName}`
+								: `Comparing ${selectedCountries.length} countries`
+							}
 						</p>
 					</CardHeader>
 					<CardContent className="w-full max-w-none p-3">
@@ -263,7 +343,7 @@ export function DataExplorer() {
 							</TabsContent>
 
 							<TabsContent value="table" className="mt-4 w-full">
-								{multiCountryData && <DataTable data={multiCountryData} />}
+								{renderDataTable()}
 							</TabsContent>
 
 							<TabsContent value="side-by-side" className="mt-4 w-full">
@@ -277,9 +357,7 @@ export function DataExplorer() {
 									<div className="space-y-2">
 										<h4 className="text-sm font-medium">Data Table</h4>
 										<div className="max-h-80 overflow-auto w-full">
-											{multiCountryData && (
-												<DataTable data={multiCountryData} />
-											)}
+											{renderDataTable()}
 										</div>
 									</div>
 								</div>
@@ -300,6 +378,10 @@ export function DataExplorer() {
 							<p className="text-sm">
 								Choose multiple countries to compare their development
 								indicators over time.
+							</p>
+							<p className="text-sm mt-2">
+								Use <strong>% Compare</strong> mode to see how countries perform 
+								relative to a baseline country (e.g., Japan's GDP vs USA over time).
 							</p>
 						</div>
 					</CardContent>
