@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, BarChart3, Percent } from "lucide-react";
+import { TrendingUp, BarChart3, Percent, RotateCcw } from "lucide-react";
 import { LineChart } from "@/components/charts/LineChart";
 import { BarChart } from "@/components/charts/BarChart";
 import { PercentageComparisonChart } from "@/components/charts/PercentageComparisonChart";
@@ -49,6 +49,15 @@ export function DataExplorer() {
 	const [baselineCountry, setBaselineCountry] = useState<string>(
 		DATA_EXPLORER_CONFIG.defaultCountries[0] || "USA"
 	);
+
+	const handleReset = () => {
+		setSelectedCountries([...DATA_EXPLORER_CONFIG.defaultCountries]);
+		setSelectedSeries(DATA_EXPLORER_CONFIG.defaultSeries);
+		setChartType(DATA_EXPLORER_CONFIG.defaultChartType);
+		setCompareYear(DATA_EXPLORER_CONFIG.defaultCompareYear);
+		setDisplayMode(DATA_EXPLORER_CONFIG.defaultDisplayMode);
+		setBaselineCountry(DATA_EXPLORER_CONFIG.defaultCountries[0] || "USA");
+	};
 
 	// Fetch metadata
 	const {
@@ -244,6 +253,15 @@ export function DataExplorer() {
 									% Compare
 								</Button>
 							</div>
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={handleReset}
+								className="flex items-center gap-2 w-full"
+							>
+								<RotateCcw className="h-4 w-4" />
+								Reset
+							</Button>
 						</div>
 					</div>
 
