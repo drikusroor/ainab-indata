@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
+import { createReadStream } from 'node:fs';
 import csv from 'csv-parser';
-import { createReadStream } from 'fs';
 
 interface MetadataRow {
   Filename: string;
