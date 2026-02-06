@@ -8,7 +8,8 @@
  * Options:
  *   --output-dir <path>       Output directory (default: ./data/split)
  *   --date-range <start:end>  Override year range (default: 1960:{currentYear-1})
- *   --delay <ms>              Delay between indicator fetches (default: 300)
+ *   --delay <ms>              Delay between batches (default: 300)
+ *   --concurrency <n>         Concurrent indicator fetches (default: 5)
  *   --resume                  Resume from checkpoint (default behavior)
  *   --no-resume               Ignore checkpoint, start fresh
  *   --dry-run                 List indicators without fetching data
@@ -55,6 +56,7 @@ function parseArgs(): {
   outputDir: string;
   dateRange: string;
   delay: number;
+  concurrency: number;
   resume: boolean;
   dryRun: boolean;
   indicators: string[] | null;
@@ -65,6 +67,7 @@ function parseArgs(): {
   let outputDir = "./data/split";
   let dateRange = `1960:${currentYear - 1}`;
   let delay = 300;
+  let concurrency = 5;
   let resume = true;
   let dryRun = false;
   let indicators: string[] | null = null;
@@ -79,6 +82,9 @@ function parseArgs(): {
         break;
       case "--delay":
         delay = parseInt(args[++i], 10);
+        break;
+      case "--concurrency":
+        concurrency = Math.max(1, parseInt(args[++i], 10));
         break;
       case "--resume":
         resume = true;
@@ -95,7 +101,7 @@ function parseArgs(): {
     }
   }
 
-  return { outputDir: resolve(outputDir), dateRange, delay, resume, dryRun, indicators };
+  return { outputDir: resolve(outputDir), dateRange, delay, concurrency, resume, dryRun, indicators };
 }
 
 // ---------------------------------------------------------------------------
@@ -463,7 +469,8 @@ async function main(): Promise<void> {
   console.log("=======================");
   console.log(`Output directory: ${opts.outputDir}`);
   console.log(`Date range: ${startYear} - ${endYear}`);
-  console.log(`Delay between indicators: ${opts.delay}ms`);
+  console.log(`Concurrency: ${opts.concurrency}`);
+  console.log(`Delay between batches: ${opts.delay}ms`);
   console.log(`Resume: ${opts.resume}`);
   console.log(`Dry run: ${opts.dryRun}`);
   if (opts.indicators) {
@@ -542,44 +549,63 @@ async function main(): Promise<void> {
   let skipped = 0;
   let filesWritten = 0;
 
-  console.log(`\nPhase 4: Fetching data for ${indicators.length} indicators...\n`);
-
-  for (let i = 0; i < indicators.length; i++) {
-    const indicator = indicators[i];
-
-    if (completedSet.has(indicator.id)) {
+  // Filter out already-completed indicators up front
+  const pendingIndicators = indicators.filter((ind) => {
+    if (completedSet.has(ind.id)) {
       skipped++;
-      continue;
+      return false;
     }
+    return true;
+  });
 
-    const progress = `[${i + 1}/${indicators.length}]`;
-    process.stdout.write(`${progress} ${indicator.id} ... `);
+  const total = indicators.length;
+  let globalIndex = total - pendingIndicators.length; // start count after skipped
 
-    const result = await fetchIndicatorData(
-      indicator.id,
-      opts.dateRange,
-      opts.outputDir,
-      startYear,
-      endYear,
+  console.log(
+    `\nPhase 4: Fetching data for ${pendingIndicators.length} indicators ` +
+    `(${skipped} skipped, concurrency: ${opts.concurrency})...\n`
+  );
+
+  // Process in batches of `concurrency`
+  for (let batchStart = 0; batchStart < pendingIndicators.length; batchStart += opts.concurrency) {
+    const batch = pendingIndicators.slice(batchStart, batchStart + opts.concurrency);
+
+    const results = await Promise.all(
+      batch.map(async (indicator) => {
+        const result = await fetchIndicatorData(
+          indicator.id,
+          opts.dateRange,
+          opts.outputDir,
+          startYear,
+          endYear,
+        );
+        return { indicator, result };
+      })
     );
 
-    if (result.error) {
-      console.log(`FAILED: ${result.error}`);
-      failedIndicators.push(indicator.id);
-    } else {
-      const count = result.countriesWithData.size;
-      console.log(`${count} countries`);
-      filesWritten += count;
+    // Process results sequentially for clean output and checkpoint updates
+    for (const { indicator, result } of results) {
+      globalIndex++;
+      const progress = `[${globalIndex}/${total}]`;
 
-      for (const countryCode of result.countriesWithData) {
-        indexEntries.push({ countryCode, seriesCode: indicator.id });
+      if (result.error) {
+        console.log(`${progress} ${indicator.id} ... FAILED: ${result.error}`);
+        failedIndicators.push(indicator.id);
+      } else {
+        const count = result.countriesWithData.size;
+        console.log(`${progress} ${indicator.id} ... ${count} countries`);
+        filesWritten += count;
+
+        for (const countryCode of result.countriesWithData) {
+          indexEntries.push({ countryCode, seriesCode: indicator.id });
+        }
       }
+
+      completedSet.add(indicator.id);
+      processed++;
     }
 
-    completedSet.add(indicator.id);
-    processed++;
-
-    // Save checkpoint
+    // Save checkpoint after each batch
     await saveCheckpoint(opts.outputDir, {
       completedIndicators: Array.from(completedSet),
       startedAt: checkpoint?.startedAt ?? new Date().toISOString(),
@@ -588,8 +614,8 @@ async function main(): Promise<void> {
       failedIndicators,
     });
 
-    // Delay between requests
-    if (i < indicators.length - 1) {
+    // Delay between batches (not after the last one)
+    if (batchStart + opts.concurrency < pendingIndicators.length) {
       await sleep(opts.delay);
     }
   }
