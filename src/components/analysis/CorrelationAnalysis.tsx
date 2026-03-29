@@ -9,6 +9,8 @@ import { useCountries, useSeries } from '@/lib/hooks/use-worldbank-data'
 import { useMultiSeriesData } from '@/lib/hooks/use-multi-series-data'
 import { pearsonCorrelation, linearRegression } from '@/lib/statistics'
 import { DATA_EXPLORER_CONFIG } from '@/lib/config'
+import { ScaleToggle, type ScaleType } from '@/components/ui/scale-toggle'
+import { ArrowLeftRight } from 'lucide-react'
 
 export function CorrelationAnalysis() {
   const [selectedCountries, setSelectedCountries] = useState<string[]>([
@@ -18,6 +20,13 @@ export function CorrelationAnalysis() {
   const [seriesY, setSeriesY] = useState('EN.ATM.CO2E.PC')
   const [yearStart, setYearStart] = useState(1990)
   const [yearEnd, setYearEnd] = useState(2023)
+  const [xScaleType, setXScaleType] = useState<ScaleType>('linear')
+  const [yScale, setYScale] = useState<ScaleType>('linear')
+
+  const handleSwapAxes = () => {
+    setSeriesX(seriesY)
+    setSeriesY(seriesX)
+  }
 
   const { data: countries, isLoading: countriesLoading, error: countriesError } = useCountries()
   const { data: seriesList, isLoading: seriesLoading, error: seriesError } = useSeries()
@@ -170,7 +179,7 @@ export function CorrelationAnalysis() {
   return (
     <div className="space-y-4">
       {/* Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_1fr] gap-4 items-end">
         <div className="space-y-1">
           <label className="text-sm font-medium">X-Axis Series</label>
           <SeriesSelect
@@ -181,6 +190,14 @@ export function CorrelationAnalysis() {
             error={seriesError}
           />
         </div>
+        <button
+          type="button"
+          onClick={handleSwapAxes}
+          className="mb-1 p-2 rounded-md border border-input bg-background hover:bg-accent cursor-pointer transition-colors"
+          title="Swap X and Y axes"
+        >
+          <ArrowLeftRight className="h-4 w-4" />
+        </button>
         <div className="space-y-1">
           <label className="text-sm font-medium">Y-Axis Series</label>
           <SeriesSelect
@@ -203,9 +220,8 @@ export function CorrelationAnalysis() {
         </div>
       </div>
 
-      {/* Year Range */}
-      <div className="flex items-center gap-3">
-        <span className="text-sm font-medium">Year Range:</span>
+      {/* Year Range + Scale Controls */}
+      <div className="flex flex-wrap items-center gap-3">
         <input
           type="number"
           value={yearStart}
@@ -223,6 +239,10 @@ export function CorrelationAnalysis() {
           onChange={e => setYearEnd(Number(e.target.value))}
           className="w-24 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
         />
+        <div className="ml-auto flex gap-3">
+          <ScaleToggle label="X Scale" value={xScaleType} onChange={setXScaleType} />
+          <ScaleToggle label="Y Scale" value={yScale} onChange={setYScale} />
+        </div>
       </div>
 
       {/* Loading state */}
@@ -250,6 +270,8 @@ export function CorrelationAnalysis() {
               yLabel={ySeriesLabel}
               title={`${xSeriesLabel} vs ${ySeriesLabel}`}
               trendLine={trendLine}
+              xScaleType={xScaleType}
+              yScaleType={yScale}
             />
           </div>
 

@@ -2,6 +2,7 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  LogarithmicScale,
   PointElement,
   LineElement,
   Title,
@@ -14,6 +15,7 @@ import type { CountrySeriesData } from '@/lib/hooks/use-worldbank-data'
 ChartJS.register(
   CategoryScale,
   LinearScale,
+  LogarithmicScale,
   PointElement,
   LineElement,
   Title,
@@ -21,13 +23,16 @@ ChartJS.register(
   Legend
 )
 
+export type ScaleType = 'linear' | 'logarithmic'
+
 interface LineChartProps {
   readonly data: CountrySeriesData[]
   readonly title?: string
   readonly seriesName?: string
+  readonly yScaleType?: ScaleType
 }
 
-export function LineChart({ data, title, seriesName }: LineChartProps) {
+export function LineChart({ data, title, seriesName, yScaleType = 'linear' }: LineChartProps) {
   // Generate colors for different countries
   const colors = [
     'rgb(255, 99, 132)',
@@ -85,6 +90,7 @@ export function LineChart({ data, title, seriesName }: LineChartProps) {
     },
     scales: {
       y: {
+        type: yScaleType,
         beginAtZero: false,
       },
     },

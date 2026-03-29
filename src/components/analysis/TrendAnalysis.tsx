@@ -3,6 +3,7 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  LogarithmicScale,
   PointElement,
   LineElement,
   Title,
@@ -15,10 +16,12 @@ import { SeriesSelect } from '@/components/SeriesSelect'
 import { StatsCard } from '@/components/analysis/StatsCard'
 import { useCountries, useSeries, useCountrySeriesData } from '@/lib/hooks/use-worldbank-data'
 import { linearRegression } from '@/lib/statistics'
+import { ScaleToggle, type ScaleType } from '@/components/ui/scale-toggle'
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
+  LogarithmicScale,
   PointElement,
   LineElement,
   Title,
@@ -29,6 +32,7 @@ ChartJS.register(
 
 const COLOR_A = 'rgb(255, 99, 132)'
 const COLOR_B = 'rgb(54, 162, 235)'
+const COLOR_PREDICTION = 'rgb(76, 175, 80)'
 const COLOR_ACTUAL = 'rgb(156, 163, 175)'
 
 const formatValue = (v: number) => {
@@ -87,6 +91,8 @@ export function TrendAnalysis() {
   const [periodAEnd, setPeriodAEnd] = useState(2005)
   const [periodBStart, setPeriodBStart] = useState(2005)
   const [periodBEnd, setPeriodBEnd] = useState(2023)
+  const [yScaleType, setYScaleType] = useState<ScaleType>('linear')
+  const [predictYears, setPredictYears] = useState(0)
 
   const { data: countries, isLoading: countriesLoading } = useCountries()
   const { data: seriesList, isLoading: seriesLoading, error: seriesError } = useSeries()
@@ -182,8 +188,30 @@ export function TrendAnalysis() {
       return null
     })
 
+    // Add prediction years if requested (extends from Period B regression)
+    const lastYear = allYears[allYears.length - 1]
+    const predictionLabels: string[] = []
+    const predictionValues: (number | null)[] = []
+
+    if (predictYears > 0 && regrB) {
+      for (let i = 0; i < allYears.length; i++) {
+        predictionValues.push(null)
+      }
+      for (let y = 1; y <= predictYears; y++) {
+        const futureYear = lastYear + y
+        predictionLabels.push(String(futureYear))
+        predictionValues.push(regrB.slope * futureYear + regrB.intercept)
+      }
+      // Add nulls for actual/trendA/trendB to match extended labels
+      for (let i = 0; i < predictYears; i++) {
+        actualValues.push(null)
+        trendA.push(null)
+        trendB.push(null)
+      }
+    }
+
     return {
-      labels,
+      labels: [...labels, ...predictionLabels],
       datasets: [
         {
           label: 'Actual',
@@ -215,9 +243,24 @@ export function TrendAnalysis() {
           borderDash: [6, 3],
           spanGaps: false,
         },
+        ...(predictYears > 0 && regrB
+          ? [
+              {
+                label: `Prediction (${lastYear + 1}–${lastYear + predictYears})`,
+                data: predictionValues,
+                borderColor: COLOR_PREDICTION,
+                backgroundColor: COLOR_PREDICTION + '20',
+                pointRadius: 3,
+                tension: 0,
+                borderDash: [4, 4],
+                spanGaps: false,
+                fill: false,
+              },
+            ]
+          : []),
       ],
     }
-  }, [rawData, periodAStart, periodAEnd, periodBStart, periodBEnd])
+  }, [rawData, periodAStart, periodAEnd, periodBStart, periodBEnd, predictYears])
 
   const chartOptions = useMemo(
     () => ({
@@ -232,9 +275,10 @@ export function TrendAnalysis() {
       },
       scales: {
         x: { ticks: { maxTicksLimit: 12 } },
+        y: { type: yScaleType },
       },
     }),
-    [seriesName, countryName]
+    [seriesName, countryName, yScaleType]
   )
 
   const insufficientA = rawData
@@ -278,7 +322,7 @@ export function TrendAnalysis() {
         </div>
       </div>
 
-      {/* Period selectors */}
+      {/* Period selectors + options */}
       <div className="flex flex-wrap items-center gap-6">
         <div className="flex items-center gap-2">
           <span
@@ -334,6 +378,20 @@ export function TrendAnalysis() {
             style={{ borderColor: COLOR_B, outlineColor: COLOR_B }}
           />
         </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold" style={{ color: COLOR_PREDICTION }}>Predict:</span>
+          <input
+            type="number"
+            value={predictYears}
+            min={0}
+            max={50}
+            onChange={e => setPredictYears(Math.max(0, Number(e.target.value)))}
+            className="w-20 rounded-md border px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1"
+            style={{ borderColor: COLOR_PREDICTION, outlineColor: COLOR_PREDICTION }}
+          />
+          <span className="text-xs text-muted-foreground">years</span>
+        </div>
+        <ScaleToggle value={yScaleType} onChange={setYScaleType} />
       </div>
 
       {/* Loading */}

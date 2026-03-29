@@ -2,6 +2,7 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  LogarithmicScale,
   BarElement,
   Title,
   Tooltip,
@@ -13,20 +14,24 @@ import type { CountrySeriesData } from '@/lib/hooks/use-worldbank-data'
 ChartJS.register(
   CategoryScale,
   LinearScale,
+  LogarithmicScale,
   BarElement,
   Title,
   Tooltip,
   Legend
 )
 
+export type ScaleType = 'linear' | 'logarithmic'
+
 interface BarChartProps {
   readonly data: CountrySeriesData[]
   readonly title?: string
   readonly seriesName?: string
-  readonly year?: number // Specific year to show, or latest available
+  readonly year?: number
+  readonly yScaleType?: ScaleType
 }
 
-export function BarChart({ data, title, seriesName }: BarChartProps) {
+export function BarChart({ data, title, seriesName, yScaleType = 'linear' }: BarChartProps) {
   // Generate colors for different countries
   const colors = [
     'rgb(255, 99, 132)',
@@ -86,7 +91,7 @@ export function BarChart({ data, title, seriesName }: BarChartProps) {
         // Removed stacked: true to allow grouped bars
       },
       y: {
-        // Removed stacked: true to allow grouped bars
+        type: yScaleType,
         beginAtZero: false,
       },
     },

@@ -24,6 +24,7 @@ import { CountrySelect } from "@/components/CountrySelect";
 import { SeriesSelect } from "@/components/SeriesSelect";
 import { DataTable } from "@/components/DataTable";
 import { PercentageComparisonTable } from "@/components/PercentageComparisonTable";
+import { ScaleToggle, type ScaleType } from "@/components/ui/scale-toggle";
 
 /**
  * Enhanced Data Explorer component for multi-country comparison
@@ -46,6 +47,7 @@ export function DataExplorer() {
 	const [displayMode, setDisplayMode] = useState<
 		"visualization" | "table" | "side-by-side"
 	>(DATA_EXPLORER_CONFIG.defaultDisplayMode);
+	const [yScaleType, setYScaleType] = useState<ScaleType>("linear");
 	const [baselineCountry, setBaselineCountry] = useState<string>(
 		DATA_EXPLORER_CONFIG.defaultCountries[0] || "USA"
 	);
@@ -57,6 +59,7 @@ export function DataExplorer() {
 		setCompareYear(DATA_EXPLORER_CONFIG.defaultCompareYear);
 		setDisplayMode(DATA_EXPLORER_CONFIG.defaultDisplayMode);
 		setBaselineCountry(DATA_EXPLORER_CONFIG.defaultCountries[0] || "USA");
+		setYScaleType("linear");
 	};
 
 	// Fetch metadata
@@ -146,12 +149,13 @@ export function DataExplorer() {
 		return (
 			<div className="w-full h-96">
 				{chartType === "line" ? (
-					<LineChart data={multiCountryData} seriesName={selectedSeriesName} />
+					<LineChart data={multiCountryData} seriesName={selectedSeriesName} yScaleType={yScaleType} />
 				) : chartType === "bar" ? (
 					<BarChart
 						data={multiCountryData}
 						seriesName={selectedSeriesName}
 						year={compareYear}
+						yScaleType={yScaleType}
 					/>
 				) : (
 					<PercentageComparisonChart
@@ -266,7 +270,13 @@ export function DataExplorer() {
 					</div>
 
 					{/* Additional Chart Options */}
-					<div className="px-6 flex flex-wrap gap-6">
+					<div className="px-6 flex flex-wrap gap-6 items-end">
+						{hasData && chartType !== "percentage" && (
+							<div className="space-y-2">
+								<ScaleToggle value={yScaleType} onChange={setYScaleType} />
+							</div>
+						)}
+
 						{hasData && chartType === "bar" && availableYears.length > 0 && (
 							<div className="space-y-2 w-32">
 								<label htmlFor="compare-year" className="text-sm font-medium">

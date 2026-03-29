@@ -1,6 +1,7 @@
 import {
   Chart as ChartJS,
   LinearScale,
+  LogarithmicScale,
   PointElement,
   LineElement,
   Title,
@@ -9,7 +10,9 @@ import {
 } from 'chart.js'
 import { Scatter } from 'react-chartjs-2'
 
-ChartJS.register(LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
+ChartJS.register(LinearScale, LogarithmicScale, PointElement, LineElement, Title, Tooltip, Legend)
+
+export type ScaleType = 'linear' | 'logarithmic'
 
 export interface ScatterDataset {
   label: string
@@ -27,6 +30,8 @@ interface ScatterChartProps {
     xMin: number
     xMax: number
   }
+  xScaleType?: ScaleType
+  yScaleType?: ScaleType
 }
 
 const COLORS = [
@@ -46,6 +51,8 @@ export function ScatterChart({
   yLabel,
   title,
   trendLine,
+  xScaleType = 'linear',
+  yScaleType = 'linear',
 }: ScatterChartProps) {
   const chartDatasets = datasets.map((ds, index) => ({
     label: ds.label,
@@ -94,12 +101,14 @@ export function ScatterChart({
     },
     scales: {
       x: {
+        type: xScaleType,
         title: {
           display: true,
           text: xLabel,
         },
       },
       y: {
+        type: yScaleType,
         title: {
           display: true,
           text: yLabel,
