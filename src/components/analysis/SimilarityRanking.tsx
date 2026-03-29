@@ -79,7 +79,7 @@ function allCountriesQueryOptions(seriesCode: string) {
                     value: value === '' || value === '..' ? null : parseFloat(value),
                   }
                 })
-                .filter(item => !isNaN(item.year)) as CountryYearValue[]
+                .filter((item): item is CountryYearValue => !isNaN(item.year) && item.value !== null)
             } catch {
               return []
             }
@@ -128,23 +128,19 @@ export function SimilarityRanking() {
     queries: selectedIndicators.map(code => allCountriesQueryOptions(code)),
   })
 
-  const indicatorQueries = selectedIndicators.map((code, i) => ({
-    code,
-    data: indicatorResults[i].data,
-    isLoading: indicatorResults[i].isLoading,
-  }))
-
-  const isAnyLoading = indicatorQueries.some(q => q.isLoading)
+  const isAnyLoading = indicatorResults.some(q => q.isLoading)
 
   const { referenceEntry, topSimilar } = useMemo(() => {
-    if (isAnyLoading || indicatorQueries.some(q => !q.data)) {
+    if (isAnyLoading || indicatorResults.some(q => !q.data)) {
       return { referenceEntry: null, topSimilar: [] }
     }
 
     // Build country → indicator → value map for the selected year
     const countryIndicatorMap = new Map<string, Record<string, number>>()
 
-    for (const { code, data } of indicatorQueries) {
+    for (let idx = 0; idx < selectedIndicators.length; idx++) {
+      const code = selectedIndicators[idx]
+      const data = indicatorResults[idx].data
       if (!data) continue
       for (const entry of data) {
         if (entry.year !== year || entry.value === null) continue
@@ -161,7 +157,7 @@ export function SimilarityRanking() {
     for (const [code, values] of Array.from(countryIndicatorMap.entries())) {
       if (selectedIndicators.every(ind => ind in values)) {
         // Get country name from data
-        const firstIndicatorData = indicatorQueries[0]?.data
+        const firstIndicatorData = indicatorResults[0]?.data
         const nameEntry = firstIndicatorData?.find(e => e.countryCode === code)
         completeCountries.push({
           code,
@@ -219,7 +215,7 @@ export function SimilarityRanking() {
       },
       topSimilar: results,
     }
-  }, [indicatorQueries, isAnyLoading, year, referenceCountry, selectedIndicators])
+  }, [indicatorResults, isAnyLoading, year, referenceCountry, selectedIndicators])
 
   function handleAddIndicator() {
     if (pendingIndicator && !selectedIndicators.includes(pendingIndicator)) {

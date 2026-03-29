@@ -131,8 +131,12 @@ export function CorrelationAnalysis() {
 
   const trendLine = useMemo(() => {
     if (!overallStats || allXValues.length === 0) return undefined
-    const xMin = Math.min(...allXValues)
-    const xMax = Math.max(...allXValues)
+    let xMin = Infinity
+    let xMax = -Infinity
+    for (const v of allXValues) {
+      if (v < xMin) xMin = v
+      if (v > xMax) xMax = v
+    }
     return {
       slope: overallStats.reg.slope,
       intercept: overallStats.reg.intercept,

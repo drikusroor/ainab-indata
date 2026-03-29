@@ -70,7 +70,7 @@ function computePeriodStats(
 
   const startValue = ys[0]
   const endValue = ys[ys.length - 1]
-  const years = endYear - startYear
+  const years = xs[xs.length - 1] - xs[0]
 
   const growthRate =
     years > 0 && startValue !== 0 && startValue > 0 && endValue > 0
