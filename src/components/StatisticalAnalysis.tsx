@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CorrelationAnalysis } from '@/components/analysis/CorrelationAnalysis'
 import { SimilarityRanking } from '@/components/analysis/SimilarityRanking'
 import { TrendAnalysis } from '@/components/analysis/TrendAnalysis'
+import { GapminderChart } from '@/components/analysis/GapminderChart'
 
 export function StatisticalAnalysis() {
   return (
@@ -11,12 +12,17 @@ export function StatisticalAnalysis() {
         <CardTitle>Statistical Analysis</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="correlation">
+        <Tabs defaultValue="gapminder">
           <TabsList>
+            <TabsTrigger value="gapminder">Gapminder</TabsTrigger>
             <TabsTrigger value="correlation">Correlation</TabsTrigger>
             <TabsTrigger value="similarity">Similarity</TabsTrigger>
             <TabsTrigger value="trends">Trends</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="gapminder" className="mt-4">
+            <GapminderChart />
+          </TabsContent>
 
           <TabsContent value="correlation" className="mt-4">
             <CorrelationAnalysis />
