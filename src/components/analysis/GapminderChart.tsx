@@ -354,13 +354,13 @@ export function GapminderChart() {
               <SkipForward className="h-4 w-4" />
             </button>
 
-            {/* Year slider */}
+            {/* Year slider — snaps to available years only */}
             <input
               type="range"
-              min={minYear}
-              max={maxYear}
-              value={currentYear}
-              onChange={e => { setIsPlaying(false); setCurrentYear(Number(e.target.value)) }}
+              min={0}
+              max={availableYears.length - 1}
+              value={availableYears.indexOf(currentYear) === -1 ? 0 : availableYears.indexOf(currentYear)}
+              onChange={e => { setIsPlaying(false); setCurrentYear(availableYears[Number(e.target.value)] ?? minYear) }}
               className="flex-1 cursor-pointer"
             />
             <span className="text-sm font-bold tabular-nums w-12 text-center">{currentYear}</span>
