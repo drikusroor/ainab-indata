@@ -86,7 +86,7 @@ export function MultiSelect({
 				onClick={() => setOpen(!open)}
 				onKeyDown={handleKeyDown}
 				className={cn(
-					"justify-between min-h-10 w-full cursor-pointer pr-8",
+					"justify-between min-h-10 h-auto w-full cursor-pointer pr-8",
 					className,
 				)}
 				disabled={disabled}

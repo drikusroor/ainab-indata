@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Montserrat:wght@700&family=Roboto+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Inter:wght@400;600&family=Montserrat:wght@700&family=Roboto+Mono:wght@400;700&display=swap');
 @import "../styles/globals.css";
 
 @layer base {
@@ -12,17 +12,11 @@
 }
 
 /* cool Bun background animation 😎 */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  opacity: 1;
-  pointer-events: none;
-  /* Creative gradient background with subtle pattern overlay */
+body {
   background:
     linear-gradient(120deg, #7f7fd5 0%, #86a8e7 50%, #91eac9 100%);
-  background-blend-mode: lighten;
+  background-attachment: fixed;
+  background-size: 200% 200%;
   animation: gradient-move 24s ease-in-out infinite;
 }
 

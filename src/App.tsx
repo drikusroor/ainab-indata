@@ -7,7 +7,7 @@ export function App() {
   return (
     <>
       <div className="container mx-auto p-8 space-y-8">
-        <h1 className="text-5xl font-bold leading-tight ml-6">AINAB InData</h1>
+        <h1 className="text-5xl font-bold leading-tight ml-6" style={{ fontFamily: "'Baloo 2', cursive" }}>AINAB InData</h1>
         <Tabs defaultValue="explorer">
           <TabsList>
             <TabsTrigger value="explorer">Data Explorer</TabsTrigger>
