@@ -238,3 +238,87 @@ export function polynomialRegression(
 
   return { coefficients: coeffsCentered, degree, rSquared, predict }
 }
+
+/**
+ * Exponential regression: fits y = a * e^(b * x)
+ * Uses log-linear transform: ln(y) = ln(a) + b*x, then linear regression.
+ * Only works with positive y values.
+ */
+export interface ExponentialRegressionResult {
+  a: number
+  b: number
+  rSquared: number
+  predict: (x: number) => number
+}
+
+export function exponentialRegression(
+  xs: number[],
+  ys: number[]
+): ExponentialRegressionResult {
+  if (xs.length !== ys.length) throw new Error('Arrays must have equal length')
+  if (xs.length < 2) throw new Error('Need at least 2 data points')
+
+  // Filter out non-positive y values (can't take log)
+  const valid = xs.map((x, i) => ({ x, y: ys[i] })).filter(p => p.y > 0)
+  if (valid.length < 2) throw new Error('Need at least 2 positive y values for exponential fit')
+
+  const logYs = valid.map(p => Math.log(p.y))
+  const validXs = valid.map(p => p.x)
+
+  const reg = linearRegression(validXs, logYs)
+  const a = Math.exp(reg.intercept)
+  const b = reg.slope
+
+  const predict = (x: number) => a * Math.exp(b * x)
+
+  // R² on original scale
+  const yMean = mean(ys)
+  let ssTotal = 0
+  let ssResidual = 0
+  for (let i = 0; i < xs.length; i++) {
+    ssTotal += (ys[i] - yMean) ** 2
+    ssResidual += (ys[i] - predict(xs[i])) ** 2
+  }
+  const rSquared = ssTotal === 0 ? NaN : 1 - ssResidual / ssTotal
+
+  return { a, b, rSquared, predict }
+}
+
+/**
+ * Double exponential smoothing (Holt's method).
+ * Captures level + trend, weights recent data more heavily.
+ * Good for short-to-medium term forecasting.
+ * alpha: level smoothing (0-1), beta: trend smoothing (0-1)
+ */
+export interface HoltForecastResult {
+  fittedValues: number[]
+  predict: (stepsAhead: number) => number
+}
+
+export function holtSmoothing(
+  ys: number[],
+  alpha = 0.6,
+  beta = 0.4
+): HoltForecastResult {
+  if (ys.length < 2) throw new Error('Need at least 2 data points')
+
+  // Initialize
+  let level = ys[0]
+  let trend = ys[1] - ys[0]
+  const fitted: number[] = [level]
+
+  for (let i = 1; i < ys.length; i++) {
+    const prevLevel = level
+    level = alpha * ys[i] + (1 - alpha) * (prevLevel + trend)
+    trend = beta * (level - prevLevel) + (1 - beta) * trend
+    fitted.push(level + trend)
+  }
+
+  const lastLevel = level
+  const lastTrend = trend
+
+  return {
+    fittedValues: fitted,
+    predict: (stepsAhead: number) => lastLevel + stepsAhead * lastTrend,
+  }
+}

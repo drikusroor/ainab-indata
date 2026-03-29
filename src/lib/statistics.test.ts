@@ -8,6 +8,8 @@ import {
   euclideanDistance,
   similarityScore,
   polynomialRegression,
+  exponentialRegression,
+  holtSmoothing,
 } from "./statistics";
 
 describe("mean", () => {
@@ -189,5 +191,36 @@ describe("polynomialRegression", () => {
 
   it("throws for insufficient data points", () => {
     expect(() => polynomialRegression([1, 2], [1, 4], 2)).toThrow();
+  });
+});
+
+describe("exponentialRegression", () => {
+  it("fits exponential growth y = 2 * e^(0.5x)", () => {
+    const xs = [0, 1, 2, 3, 4];
+    const ys = xs.map(x => 2 * Math.exp(0.5 * x));
+    const result = exponentialRegression(xs, ys);
+    expect(result.a).toBeCloseTo(2, 1);
+    expect(result.b).toBeCloseTo(0.5, 1);
+    expect(result.rSquared).toBeCloseTo(1, 3);
+    expect(result.predict(5)).toBeCloseTo(2 * Math.exp(2.5), 1);
+  });
+
+  it("throws for non-positive y values only", () => {
+    expect(() => exponentialRegression([1, 2], [-1, -2])).toThrow();
+  });
+});
+
+describe("holtSmoothing", () => {
+  it("forecasts a linear trend", () => {
+    const ys = [10, 20, 30, 40, 50];
+    const result = holtSmoothing(ys);
+    // Should predict roughly 60 for next step
+    expect(result.predict(1)).toBeCloseTo(60, -1);
+  });
+
+  it("returns fitted values of same length as input", () => {
+    const ys = [1, 2, 4, 8, 16];
+    const result = holtSmoothing(ys);
+    expect(result.fittedValues.length).toBe(ys.length);
   });
 });

@@ -17,7 +17,7 @@ export function CorrelationAnalysis() {
     ...DATA_EXPLORER_CONFIG.defaultCountries,
   ])
   const [seriesX, setSeriesX] = useState('NY.GDP.PCAP.PP.KD')
-  const [seriesY, setSeriesY] = useState('EN.ATM.CO2E.PC')
+  const [seriesY, setSeriesY] = useState('SP.DYN.LE00.IN')
   const [yearStart, setYearStart] = useState(1990)
   const [yearEnd, setYearEnd] = useState(2023)
   const [xScaleType, setXScaleType] = useState<ScaleType>('linear')

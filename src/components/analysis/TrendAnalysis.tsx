@@ -15,7 +15,7 @@ import { Line } from 'react-chartjs-2'
 import { SeriesSelect } from '@/components/SeriesSelect'
 import { StatsCard } from '@/components/analysis/StatsCard'
 import { useCountries, useSeries, useCountrySeriesData } from '@/lib/hooks/use-worldbank-data'
-import { linearRegression, polynomialRegression } from '@/lib/statistics'
+import { linearRegression, polynomialRegression, exponentialRegression, holtSmoothing } from '@/lib/statistics'
 import { ScaleToggle, type ScaleType } from '@/components/ui/scale-toggle'
 
 ChartJS.register(
@@ -93,7 +93,7 @@ export function TrendAnalysis() {
   const [periodBEnd, setPeriodBEnd] = useState(2023)
   const [yScaleType, setYScaleType] = useState<ScaleType>('linear')
   const [predictYears, setPredictYears] = useState(0)
-  const [predictionMode, setPredictionMode] = useState<'linear' | 'quadratic' | 'cubic'>('quadratic')
+  const [predictionMode, setPredictionMode] = useState<'linear' | 'quadratic' | 'cubic' | 'exponential' | 'holt'>('quadratic')
 
   const { data: countries, isLoading: countriesLoading } = useCountries()
   const { data: seriesList, isLoading: seriesLoading, error: seriesError } = useSeries()
@@ -195,22 +195,27 @@ export function TrendAnalysis() {
     const predictionValues: (number | null)[] = []
 
     if (predictYears > 0 && filteredB.length >= 3) {
-      // Build prediction function based on selected mode
-      const degree = predictionMode === 'cubic' ? 3 : predictionMode === 'quadratic' ? 2 : 1
       const bXs = filteredB.map(d => d.year)
       const bYs = filteredB.map(d => d.value)
 
       let predictFn: (x: number) => number
       try {
-        if (degree === 1 && regrB) {
+        if (predictionMode === 'exponential') {
+          const expResult = exponentialRegression(bXs, bYs)
+          predictFn = expResult.predict
+        } else if (predictionMode === 'holt') {
+          const holtResult = holtSmoothing(bYs)
+          const lastBYear = bXs[bXs.length - 1]
+          predictFn = (x: number) => holtResult.predict(x - lastBYear)
+        } else if (predictionMode === 'linear' && regrB) {
           predictFn = (x: number) => regrB!.slope * x + regrB!.intercept
         } else {
+          const degree = predictionMode === 'cubic' ? 3 : 2
           const polyResult = polynomialRegression(bXs, bYs, Math.min(degree, filteredB.length - 1))
           predictFn = polyResult.predict
         }
       } catch {
-        // Fall back to linear if polynomial fails
-        predictFn = regrB ? (x: number) => regrB!.slope * x + regrB!.intercept : (x: number) => 0
+        predictFn = regrB ? (x: number) => regrB!.slope * x + regrB!.intercept : (_x: number) => 0
       }
 
       // Fill nulls for existing years
@@ -417,13 +422,15 @@ export function TrendAnalysis() {
           <span className="text-xs text-muted-foreground">years</span>
           <select
             value={predictionMode}
-            onChange={e => setPredictionMode(e.target.value as 'linear' | 'quadratic' | 'cubic')}
+            onChange={e => setPredictionMode(e.target.value as typeof predictionMode)}
             className="text-xs rounded border border-input bg-background px-2 py-1"
             style={{ borderColor: COLOR_PREDICTION }}
           >
             <option value="linear">Linear</option>
             <option value="quadratic">Quadratic</option>
             <option value="cubic">Cubic</option>
+            <option value="exponential">Exponential</option>
+            <option value="holt">Holt smoothing</option>
           </select>
         </div>
         <ScaleToggle value={yScaleType} onChange={setYScaleType} />
