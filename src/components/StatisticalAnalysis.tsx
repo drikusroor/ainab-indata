@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CorrelationAnalysis } from '@/components/analysis/CorrelationAnalysis'
 import { SimilarityRanking } from '@/components/analysis/SimilarityRanking'
+import { TrendAnalysis } from '@/components/analysis/TrendAnalysis'
 
 export function StatisticalAnalysis() {
   return (
@@ -26,9 +27,7 @@ export function StatisticalAnalysis() {
           </TabsContent>
 
           <TabsContent value="trends" className="mt-4">
-            <div className="text-muted-foreground text-sm p-4 rounded-lg border border-dashed">
-              Trend analysis coming soon.
-            </div>
+            <TrendAnalysis />
           </TabsContent>
         </Tabs>
       </CardContent>
