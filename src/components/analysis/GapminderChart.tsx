@@ -73,40 +73,51 @@ export function GapminderChart() {
     [seriesList]
   )
 
-  // Find all available years across all data
+  // Find years where at least one selected country has both X and Y data
   const availableYears = useMemo(() => {
-    if (!multiSeriesData) return []
+    if (!multiSeriesData || multiSeriesData.length < 2) return []
+    const xData = multiSeriesData.find(e => e.seriesCode === seriesX)
+    const yData = multiSeriesData.find(e => e.seriesCode === seriesY)
+    if (!xData || !yData) return []
+
     const years = new Set<number>()
-    for (const entry of multiSeriesData) {
-      for (const country of entry.countries) {
-        for (const d of country.data) {
-          if (d.value !== null) years.add(d.year)
-        }
+    for (const code of selectedCountries) {
+      const xCountry = xData.countries.find(c => c.country.code === code)
+      const yCountry = yData.countries.find(c => c.country.code === code)
+      if (!xCountry || !yCountry) continue
+
+      const xYears = new Set(xCountry.data.filter(d => d.value != null).map(d => d.year))
+      for (const d of yCountry.data) {
+        if (d.value != null && xYears.has(d.year)) years.add(d.year)
       }
     }
     return Array.from(years).sort((a, b) => a - b)
-  }, [multiSeriesData])
+  }, [multiSeriesData, seriesX, seriesY, selectedCountries])
 
   const minYear = availableYears[0] ?? 1960
   const maxYear = availableYears[availableYears.length - 1] ?? 2023
 
-  // Playback logic
+  // Playback logic — steps through availableYears only
   useEffect(() => {
     if (isPlaying) {
       intervalRef.current = setInterval(() => {
         setCurrentYear(prev => {
-          if (prev >= maxYear) {
+          const currentIdx = availableYears.indexOf(prev)
+          const nextIdx = currentIdx === -1
+            ? availableYears.findIndex(y => y > prev)
+            : currentIdx + 1
+          if (nextIdx === -1 || nextIdx >= availableYears.length) {
             setIsPlaying(false)
             return prev
           }
-          return prev + 1
+          return availableYears[nextIdx]
         })
       }, speed)
     }
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [isPlaying, speed, maxYear])
+  }, [isPlaying, speed, availableYears])
 
   const handlePlayPause = useCallback(() => {
     if (currentYear >= maxYear) {
@@ -119,12 +130,20 @@ export function GapminderChart() {
 
   const handleStepBack = () => {
     setIsPlaying(false)
-    setCurrentYear(prev => Math.max(minYear, prev - 1))
+    setCurrentYear(prev => {
+      const idx = availableYears.indexOf(prev)
+      if (idx <= 0) return availableYears[0] ?? prev
+      return availableYears[idx - 1]
+    })
   }
 
   const handleStepForward = () => {
     setIsPlaying(false)
-    setCurrentYear(prev => Math.min(maxYear, prev + 1))
+    setCurrentYear(prev => {
+      const idx = availableYears.indexOf(prev)
+      if (idx === -1 || idx >= availableYears.length - 1) return prev
+      return availableYears[idx + 1]
+    })
   }
 
   // Build bubble data for the current year
