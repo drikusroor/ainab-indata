@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
 	useCountries,
 	useSeries,
@@ -31,13 +31,26 @@ import { ScaleToggle, type ScaleType } from "@/components/ui/scale-toggle";
  * Supports country selection, series selection, and data visualization
  * Uses configurable defaults for initial state
  */
-export function DataExplorer() {
+interface DataExplorerProps {
+	searchCountries?: string[] | null;
+	searchSeries?: string | null;
+	onSearchConsumed?: () => void;
+}
+
+export function DataExplorer({ searchCountries, searchSeries, onSearchConsumed }: DataExplorerProps) {
 	const [selectedCountries, setSelectedCountries] = useState<string[]>([
 		...DATA_EXPLORER_CONFIG.defaultCountries,
 	]);
 	const [selectedSeries, setSelectedSeries] = useState<string>(
 		DATA_EXPLORER_CONFIG.defaultSeries,
 	);
+
+	// Apply search results
+	useEffect(() => {
+		if (searchCountries) setSelectedCountries(searchCountries);
+		if (searchSeries) setSelectedSeries(searchSeries);
+		if ((searchCountries || searchSeries) && onSearchConsumed) onSearchConsumed();
+	}, [searchCountries, searchSeries, onSearchConsumed]);
 	const [chartType, setChartType] = useState<"line" | "bar" | "percentage">(
 		DATA_EXPLORER_CONFIG.defaultChartType,
 	);

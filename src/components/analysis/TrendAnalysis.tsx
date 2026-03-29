@@ -218,22 +218,27 @@ export function TrendAnalysis() {
         predictFn = regrB ? (x: number) => regrB!.slope * x + regrB!.intercept : (_x: number) => 0
       }
 
-      // Fill nulls for existing years
+      // Fill nulls for existing years, connect at periodBEnd
       for (let i = 0; i < allYears.length; i++) {
-        predictionValues.push(null)
+        const yr = allYears[i]
+        if (yr === periodBEnd) {
+          // Connect prediction to the end of Period B
+          predictionValues.push(predictFn(periodBEnd))
+        } else {
+          predictionValues.push(null)
+        }
       }
-      // Connect prediction to last actual data point
-      const lastActual = rawData.find(d => d.year === lastYear)
-      if (lastActual?.value != null) {
-        predictionValues[predictionValues.length - 1] = lastActual.value
-      }
+      // Add future years starting from periodBEnd + 1
       for (let y = 1; y <= predictYears; y++) {
-        const futureYear = lastYear + y
-        predictionLabels.push(String(futureYear))
-        predictionValues.push(predictFn(futureYear))
+        const futureYear = periodBEnd + y
+        // Skip if this year already exists in allYears
+        if (!allYears.includes(futureYear)) {
+          predictionLabels.push(String(futureYear))
+          predictionValues.push(predictFn(futureYear))
+        }
       }
       // Add nulls for actual/trendA/trendB to match extended labels
-      for (let i = 0; i < predictYears; i++) {
+      for (let i = 0; i < predictionLabels.length; i++) {
         actualValues.push(null)
         trendA.push(null)
         trendB.push(null)
@@ -276,7 +281,7 @@ export function TrendAnalysis() {
         ...(predictYears > 0 && predictionValues.length > 0
           ? [
               {
-                label: `Prediction — ${predictionMode} (${lastYear + 1}–${lastYear + predictYears})`,
+                label: `Prediction — ${predictionMode} (${periodBEnd + 1}–${periodBEnd + predictYears})`,
                 data: predictionValues,
                 borderColor: COLOR_PREDICTION,
                 backgroundColor: COLOR_PREDICTION + '20',

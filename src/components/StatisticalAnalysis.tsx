@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CorrelationAnalysis } from '@/components/analysis/CorrelationAnalysis'
@@ -5,14 +6,39 @@ import { SimilarityRanking } from '@/components/analysis/SimilarityRanking'
 import { TrendAnalysis } from '@/components/analysis/TrendAnalysis'
 import { GapminderChart } from '@/components/analysis/GapminderChart'
 
-export function StatisticalAnalysis() {
+interface StatisticalAnalysisProps {
+  searchTab?: string | null
+  searchCountries?: string[] | null
+  searchSeries?: string | null
+  searchSeriesX?: string | null
+  searchSeriesY?: string | null
+  onSearchConsumed?: () => void
+}
+
+export function StatisticalAnalysis({
+  searchTab,
+  searchCountries,
+  searchSeries,
+  searchSeriesX,
+  searchSeriesY,
+  onSearchConsumed,
+}: StatisticalAnalysisProps) {
+  const [activeTab, setActiveTab] = useState('gapminder')
+
+  useEffect(() => {
+    if (searchTab) {
+      setActiveTab(searchTab)
+      if (onSearchConsumed) onSearchConsumed()
+    }
+  }, [searchTab, onSearchConsumed])
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Statistical Analysis</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="gapminder">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="gapminder">Gapminder</TabsTrigger>
             <TabsTrigger value="correlation">Correlation</TabsTrigger>
@@ -25,7 +51,11 @@ export function StatisticalAnalysis() {
           </TabsContent>
 
           <TabsContent value="correlation" className="mt-4">
-            <CorrelationAnalysis />
+            <CorrelationAnalysis
+              searchCountries={searchCountries}
+              searchSeriesX={searchSeriesX}
+              searchSeriesY={searchSeriesY}
+            />
           </TabsContent>
 
           <TabsContent value="similarity" className="mt-4">

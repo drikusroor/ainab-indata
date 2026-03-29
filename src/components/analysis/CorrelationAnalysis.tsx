@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { SeriesSelect } from '@/components/SeriesSelect'
 import { CountrySelect } from '@/components/CountrySelect'
 import { ScatterChart } from '@/components/charts/ScatterChart'
@@ -12,7 +12,13 @@ import { DATA_EXPLORER_CONFIG } from '@/lib/config'
 import { ScaleToggle, type ScaleType } from '@/components/ui/scale-toggle'
 import { ArrowLeftRight } from 'lucide-react'
 
-export function CorrelationAnalysis() {
+interface CorrelationAnalysisProps {
+  searchCountries?: string[] | null
+  searchSeriesX?: string | null
+  searchSeriesY?: string | null
+}
+
+export function CorrelationAnalysis({ searchCountries, searchSeriesX, searchSeriesY }: CorrelationAnalysisProps) {
   const [selectedCountries, setSelectedCountries] = useState<string[]>([
     ...DATA_EXPLORER_CONFIG.defaultCountries,
   ])
@@ -22,6 +28,13 @@ export function CorrelationAnalysis() {
   const [yearEnd, setYearEnd] = useState(2023)
   const [xScaleType, setXScaleType] = useState<ScaleType>('linear')
   const [yScale, setYScale] = useState<ScaleType>('linear')
+
+  // Apply search results
+  useEffect(() => {
+    if (searchCountries) setSelectedCountries(searchCountries)
+    if (searchSeriesX) setSeriesX(searchSeriesX)
+    if (searchSeriesY) setSeriesY(searchSeriesY)
+  }, [searchCountries, searchSeriesX, searchSeriesY])
 
   const handleSwapAxes = () => {
     setSeriesX(seriesY)
