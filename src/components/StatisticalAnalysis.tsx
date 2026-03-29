@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { CorrelationAnalysis } from '@/components/analysis/CorrelationAnalysis'
 
 export function StatisticalAnalysis() {
   return (
@@ -16,9 +17,7 @@ export function StatisticalAnalysis() {
           </TabsList>
 
           <TabsContent value="correlation" className="mt-4">
-            <div className="text-muted-foreground text-sm p-4 rounded-lg border border-dashed">
-              Correlation analysis coming soon.
-            </div>
+            <CorrelationAnalysis />
           </TabsContent>
 
           <TabsContent value="similarity" className="mt-4">
