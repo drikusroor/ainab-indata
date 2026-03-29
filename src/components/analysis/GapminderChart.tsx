@@ -139,6 +139,36 @@ export function GapminderChart() {
 
     if (!xData || !yData) return { chartData: { datasets: [] }, chartOptions: {} }
 
+    // Compute global axis ranges across ALL years (so axes don't jump during animation)
+    let globalXMin = Infinity, globalXMax = -Infinity
+    let globalYMin = Infinity, globalYMax = -Infinity
+    for (const c of xData.countries) {
+      for (const d of c.data) {
+        if (d.value != null) {
+          if (d.value < globalXMin) globalXMin = d.value
+          if (d.value > globalXMax) globalXMax = d.value
+        }
+      }
+    }
+    for (const c of yData.countries) {
+      for (const d of c.data) {
+        if (d.value != null) {
+          if (d.value < globalYMin) globalYMin = d.value
+          if (d.value > globalYMax) globalYMax = d.value
+        }
+      }
+    }
+    // Add 5% padding
+    const xPad = (globalXMax - globalXMin) * 0.05 || 1
+    const yPad = (globalYMax - globalYMin) * 0.05 || 1
+    globalXMin -= xPad
+    globalXMax += xPad
+    globalYMin -= yPad
+    globalYMax += yPad
+    // For log scale, ensure min > 0
+    if (xScaleType === 'logarithmic' && globalXMin <= 0) globalXMin = 1
+    if (yScaleType === 'logarithmic' && globalYMin <= 0) globalYMin = 1
+
     // Find max Z value for scaling bubble size
     let maxZValue = 1
     if (zData) {
@@ -215,10 +245,14 @@ export function GapminderChart() {
       scales: {
         x: {
           type: xScaleType,
+          min: globalXMin,
+          max: globalXMax,
           title: { display: true, text: xSeriesName },
         },
         y: {
           type: yScaleType,
+          min: globalYMin,
+          max: globalYMax,
           title: { display: true, text: ySeriesName },
         },
       },

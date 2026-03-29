@@ -7,6 +7,7 @@ import {
   zScoreNormalize,
   euclideanDistance,
   similarityScore,
+  polynomialRegression,
 } from "./statistics";
 
 describe("mean", () => {
@@ -158,5 +159,35 @@ describe("similarityScore", () => {
   it("decreases as distance increases", () => {
     expect(similarityScore(1)).toBeGreaterThan(similarityScore(2));
     expect(similarityScore(2)).toBeGreaterThan(similarityScore(10));
+  });
+});
+
+describe("polynomialRegression", () => {
+  it("fits a perfect quadratic y = x^2", () => {
+    const xs = [0, 1, 2, 3, 4, 5];
+    const ys = xs.map(x => x * x);
+    const result = polynomialRegression(xs, ys, 2);
+    expect(result.degree).toBe(2);
+    expect(result.rSquared).toBeCloseTo(1, 5);
+    expect(result.predict(6)).toBeCloseTo(36, 1);
+    expect(result.predict(3)).toBeCloseTo(9, 1);
+  });
+
+  it("fits a linear function with degree 1", () => {
+    const xs = [1, 2, 3, 4, 5];
+    const ys = [2, 4, 6, 8, 10];
+    const result = polynomialRegression(xs, ys, 1);
+    expect(result.predict(6)).toBeCloseTo(12, 1);
+  });
+
+  it("predicts beyond data range (extrapolation)", () => {
+    const xs = [0, 1, 2, 3, 4];
+    const ys = [1, 2, 5, 10, 17]; // roughly y = x^2 + 1
+    const result = polynomialRegression(xs, ys, 2);
+    expect(result.predict(5)).toBeCloseTo(26, 0);
+  });
+
+  it("throws for insufficient data points", () => {
+    expect(() => polynomialRegression([1, 2], [1, 4], 2)).toThrow();
   });
 });

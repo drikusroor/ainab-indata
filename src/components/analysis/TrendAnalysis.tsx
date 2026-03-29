@@ -15,7 +15,7 @@ import { Line } from 'react-chartjs-2'
 import { SeriesSelect } from '@/components/SeriesSelect'
 import { StatsCard } from '@/components/analysis/StatsCard'
 import { useCountries, useSeries, useCountrySeriesData } from '@/lib/hooks/use-worldbank-data'
-import { linearRegression } from '@/lib/statistics'
+import { linearRegression, polynomialRegression } from '@/lib/statistics'
 import { ScaleToggle, type ScaleType } from '@/components/ui/scale-toggle'
 
 ChartJS.register(
@@ -93,6 +93,7 @@ export function TrendAnalysis() {
   const [periodBEnd, setPeriodBEnd] = useState(2023)
   const [yScaleType, setYScaleType] = useState<ScaleType>('linear')
   const [predictYears, setPredictYears] = useState(0)
+  const [predictionMode, setPredictionMode] = useState<'linear' | 'quadratic' | 'cubic'>('quadratic')
 
   const { data: countries, isLoading: countriesLoading } = useCountries()
   const { data: seriesList, isLoading: seriesLoading, error: seriesError } = useSeries()
@@ -188,19 +189,43 @@ export function TrendAnalysis() {
       return null
     })
 
-    // Add prediction years if requested (extends from Period B regression)
+    // Add prediction years if requested
     const lastYear = allYears[allYears.length - 1]
     const predictionLabels: string[] = []
     const predictionValues: (number | null)[] = []
 
-    if (predictYears > 0 && regrB) {
+    if (predictYears > 0 && filteredB.length >= 3) {
+      // Build prediction function based on selected mode
+      const degree = predictionMode === 'cubic' ? 3 : predictionMode === 'quadratic' ? 2 : 1
+      const bXs = filteredB.map(d => d.year)
+      const bYs = filteredB.map(d => d.value)
+
+      let predictFn: (x: number) => number
+      try {
+        if (degree === 1 && regrB) {
+          predictFn = (x: number) => regrB!.slope * x + regrB!.intercept
+        } else {
+          const polyResult = polynomialRegression(bXs, bYs, Math.min(degree, filteredB.length - 1))
+          predictFn = polyResult.predict
+        }
+      } catch {
+        // Fall back to linear if polynomial fails
+        predictFn = regrB ? (x: number) => regrB!.slope * x + regrB!.intercept : (x: number) => 0
+      }
+
+      // Fill nulls for existing years
       for (let i = 0; i < allYears.length; i++) {
         predictionValues.push(null)
+      }
+      // Connect prediction to last actual data point
+      const lastActual = rawData.find(d => d.year === lastYear)
+      if (lastActual?.value != null) {
+        predictionValues[predictionValues.length - 1] = lastActual.value
       }
       for (let y = 1; y <= predictYears; y++) {
         const futureYear = lastYear + y
         predictionLabels.push(String(futureYear))
-        predictionValues.push(regrB.slope * futureYear + regrB.intercept)
+        predictionValues.push(predictFn(futureYear))
       }
       // Add nulls for actual/trendA/trendB to match extended labels
       for (let i = 0; i < predictYears; i++) {
@@ -243,24 +268,24 @@ export function TrendAnalysis() {
           borderDash: [6, 3],
           spanGaps: false,
         },
-        ...(predictYears > 0 && regrB
+        ...(predictYears > 0 && predictionValues.length > 0
           ? [
               {
-                label: `Prediction (${lastYear + 1}–${lastYear + predictYears})`,
+                label: `Prediction — ${predictionMode} (${lastYear + 1}–${lastYear + predictYears})`,
                 data: predictionValues,
                 borderColor: COLOR_PREDICTION,
                 backgroundColor: COLOR_PREDICTION + '20',
                 pointRadius: 3,
-                tension: 0,
+                tension: predictionMode === 'linear' ? 0 : 0.3,
                 borderDash: [4, 4],
-                spanGaps: false,
+                spanGaps: true,
                 fill: false,
               },
             ]
           : []),
       ],
     }
-  }, [rawData, periodAStart, periodAEnd, periodBStart, periodBEnd, predictYears])
+  }, [rawData, periodAStart, periodAEnd, periodBStart, periodBEnd, predictYears, predictionMode])
 
   const chartOptions = useMemo(
     () => ({
@@ -390,6 +415,16 @@ export function TrendAnalysis() {
             style={{ borderColor: COLOR_PREDICTION, outlineColor: COLOR_PREDICTION }}
           />
           <span className="text-xs text-muted-foreground">years</span>
+          <select
+            value={predictionMode}
+            onChange={e => setPredictionMode(e.target.value as 'linear' | 'quadratic' | 'cubic')}
+            className="text-xs rounded border border-input bg-background px-2 py-1"
+            style={{ borderColor: COLOR_PREDICTION }}
+          >
+            <option value="linear">Linear</option>
+            <option value="quadratic">Quadratic</option>
+            <option value="cubic">Cubic</option>
+          </select>
         </div>
         <ScaleToggle value={yScaleType} onChange={setYScaleType} />
       </div>

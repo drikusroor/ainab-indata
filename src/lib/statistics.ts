@@ -137,3 +137,104 @@ export function euclideanDistance(a: number[], b: number[]): number {
 export function similarityScore(distance: number): number {
   return (1 / (1 + distance)) * 100;
 }
+
+/**
+ * Polynomial regression using least-squares via normal equations.
+ * Returns coefficients [a0, a1, a2, ...] where y = a0 + a1*x + a2*x^2 + ...
+ */
+export interface PolynomialRegressionResult {
+  coefficients: number[]
+  degree: number
+  rSquared: number
+  predict: (x: number) => number
+}
+
+export function polynomialRegression(
+  xs: number[],
+  ys: number[],
+  degree: number
+): PolynomialRegressionResult {
+  if (xs.length !== ys.length) throw new Error('Arrays must have equal length')
+  if (xs.length < degree + 1) throw new Error(`Need at least ${degree + 1} points for degree ${degree}`)
+
+  const n = xs.length
+  const d = degree + 1
+
+  // Center x values for numerical stability
+  const xMean = mean(xs)
+  const centered = xs.map(x => x - xMean)
+
+  // Build Vandermonde matrix V and solve V^T * V * a = V^T * y
+  // Using normal equations (sufficient for low-degree polynomials)
+  const VTV: number[][] = Array.from({ length: d }, () => new Array(d).fill(0))
+  const VTy: number[] = new Array(d).fill(0)
+
+  for (let i = 0; i < n; i++) {
+    const powers: number[] = new Array(d)
+    powers[0] = 1
+    for (let j = 1; j < d; j++) {
+      powers[j] = powers[j - 1] * centered[i]
+    }
+    for (let j = 0; j < d; j++) {
+      VTy[j] += powers[j] * ys[i]
+      for (let k = 0; k < d; k++) {
+        VTV[j][k] += powers[j] * powers[k]
+      }
+    }
+  }
+
+  // Solve via Gaussian elimination with partial pivoting
+  const augmented = VTV.map((row, i) => [...row, VTy[i]])
+  for (let col = 0; col < d; col++) {
+    // Pivot
+    let maxRow = col
+    for (let row = col + 1; row < d; row++) {
+      if (Math.abs(augmented[row][col]) > Math.abs(augmented[maxRow][col])) maxRow = row
+    }
+    ;[augmented[col], augmented[maxRow]] = [augmented[maxRow], augmented[col]]
+
+    const pivot = augmented[col][col]
+    if (Math.abs(pivot) < 1e-12) continue
+
+    for (let row = col + 1; row < d; row++) {
+      const factor = augmented[row][col] / pivot
+      for (let k = col; k <= d; k++) {
+        augmented[row][k] -= factor * augmented[col][k]
+      }
+    }
+  }
+
+  // Back substitution
+  const coeffsCentered = new Array(d).fill(0)
+  for (let i = d - 1; i >= 0; i--) {
+    let sum = augmented[i][d]
+    for (let j = i + 1; j < d; j++) {
+      sum -= augmented[i][j] * coeffsCentered[j]
+    }
+    coeffsCentered[i] = Math.abs(augmented[i][i]) < 1e-12 ? 0 : sum / augmented[i][i]
+  }
+
+  // Build predict function using centered coefficients
+  const predict = (x: number) => {
+    const cx = x - xMean
+    let result = 0
+    let power = 1
+    for (let i = 0; i < d; i++) {
+      result += coeffsCentered[i] * power
+      power *= cx
+    }
+    return result
+  }
+
+  // R² calculation
+  const yMean = mean(ys)
+  let ssTotal = 0
+  let ssResidual = 0
+  for (let i = 0; i < n; i++) {
+    ssTotal += (ys[i] - yMean) ** 2
+    ssResidual += (ys[i] - predict(xs[i])) ** 2
+  }
+  const rSquared = ssTotal === 0 ? NaN : 1 - ssResidual / ssTotal
+
+  return { coefficients: coeffsCentered, degree, rSquared, predict }
+}
