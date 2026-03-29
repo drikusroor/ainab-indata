@@ -110,7 +110,7 @@ Add a Statistical Analysis tool to ainab-indata as a new top-level view alongsid
 ### Hooks
 | File | Purpose |
 |------|---------|
-| `src/lib/hooks/use-multi-series-data.ts` | Fetch 2+ series for multiple countries |
+| `src/lib/hooks/use-multi-series-data.ts` | Fetch 2+ series for multiple countries (composes existing `useCountrySeriesData` in a loop — no new fetch logic, just batching) |
 | `src/lib/hooks/use-all-countries-for-series.ts` | Fetch one series for all countries (uses _index.csv) |
 | `src/lib/hooks/use-correlation.ts` | Compute correlation stats from paired data |
 | `src/lib/hooks/use-similarity.ts` | Z-score normalize + rank countries by distance |
@@ -144,12 +144,12 @@ Estimated ~100-150 lines of TypeScript.
 
 - Fetch on demand, show loading states. No pre-fetching or background loading.
 - TanStack Query handles caching (same cache config as existing hooks) and deduplication.
-- Similarity ranking fetches the most data (all countries for N indicators). The `_index.csv` is used to avoid fetching non-existent files. Progressive loading: show results as each indicator loads.
+- Similarity ranking fetches the most data (all countries for N indicators). The `_index.csv` is used to avoid fetching non-existent files. Limit concurrent fetches to ~20 at a time to avoid overwhelming the browser. Progressive loading: show results as each indicator loads.
 - Computation hooks use `useMemo` to avoid recalculating on unrelated re-renders.
 
 ## Null Data Handling
 
-- Correlation: Only pair data points where both series have non-null values for that year
+- Correlation: Only pair data points where both series have non-null values for that year. Require at least 5 data points for meaningful stats; show a warning if N < 5
 - Similarity: Skip countries that don't have data for all selected indicators in the chosen year
 - Trends: Skip null values in regression calculation; require at least 3 data points per period
 
