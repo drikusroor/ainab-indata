@@ -1,17 +1,26 @@
 import { DataExplorer } from "./components/DataExplorer";
+import { StatisticalAnalysis } from "./components/StatisticalAnalysis";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import "./index.css";
 
 export function App() {
   return (
     <>
       <div className="container mx-auto p-8 space-y-8">
-        {/* Data Explorer Section */}
-        <div>
-          <h1 className="text-5xl font-bold -mb-3 ml-6 leading-tight">AINAB InData</h1>
-          <DataExplorer />
-        </div>
+        <h1 className="text-5xl font-bold leading-tight ml-6">AINAB InData</h1>
+        <Tabs defaultValue="explorer">
+          <TabsList>
+            <TabsTrigger value="explorer">Data Explorer</TabsTrigger>
+            <TabsTrigger value="analysis">Statistical Analysis</TabsTrigger>
+          </TabsList>
+          <TabsContent value="explorer">
+            <DataExplorer />
+          </TabsContent>
+          <TabsContent value="analysis" className="mt-4">
+            <StatisticalAnalysis />
+          </TabsContent>
+        </Tabs>
       </div>
-      {/* Data source credit */}
       <footer className="mt-12 text-center text-sm text-foreground mb-1">
         Data source: World Bank –
         <a
