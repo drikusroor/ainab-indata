@@ -26,6 +26,7 @@ import { join, resolve } from "node:path";
 
 interface Country {
   iso3: string;
+  iso2: string;
   name: string;
 }
 
@@ -36,6 +37,7 @@ interface Indicator {
 
 interface DataPoint {
   countryiso3code: string;
+  countryiso2code: string;
   date: string;
   value: number | null;
 }
@@ -159,6 +161,7 @@ async function fetchCountries(): Promise<Map<string, Country>> {
   for (const entry of data[1]) {
     countries.set(entry.id, {
       iso3: entry.id,
+      iso2: entry.iso2Code,
       name: entry.name,
     });
   }
@@ -253,6 +256,7 @@ function csvQuote(value: string): string {
 
 async function fetchIndicatorData(
   indicatorId: string,
+  iso2ToIso3: Map<string, string>,
   dateRange: string,
   outputDir: string,
   startYear: number,
@@ -271,7 +275,7 @@ async function fetchIndicatorData(
 
     do {
       const data = await fetchJson(
-        `${API_BASE}/country/all/indicator/${indicatorId}?format=json&date=${dateRange}&per_page=15000&page=${page}`
+        `${API_BASE}/country/all/indicator/${indicatorId}?format=json&date=${dateRange}&per_page=20000&page=${page}`
       );
 
       if (!Array.isArray(data) || data.length < 2 || !data[1]) {
@@ -284,6 +288,7 @@ async function fetchIndicatorData(
       for (const entry of data[1]) {
         allDataPoints.push({
           countryiso3code: entry.countryiso3code,
+          countryiso2code: entry.country?.id,
           date: entry.date,
           value: entry.value,
         });
@@ -294,11 +299,14 @@ async function fetchIndicatorData(
     // Group by country
     const byCountry = new Map<string, Map<string, number | null>>();
     for (const dp of allDataPoints) {
-      if (!dp.countryiso3code) continue;
-      if (!byCountry.has(dp.countryiso3code)) {
-        byCountry.set(dp.countryiso3code, new Map());
+      // Some aggregates (e.g. income groups) come back with an empty
+      // countryiso3code; fall back to mapping their ISO2 id.
+      const iso3 = dp.countryiso3code || iso2ToIso3.get(dp.countryiso2code);
+      if (!iso3) continue;
+      if (!byCountry.has(iso3)) {
+        byCountry.set(iso3, new Map());
       }
-      byCountry.get(dp.countryiso3code)!.set(dp.date, dp.value);
+      byCountry.get(iso3)!.set(dp.date, dp.value);
     }
 
     // Write CSV for each country that has at least one non-null value
@@ -487,16 +495,20 @@ async function main(): Promise<void> {
   const countries = await fetchCountries();
   const allIndicators = await fetchIndicators();
 
-  // Get API last-updated date from the countries response
+  const iso2ToIso3 = new Map(
+    Array.from(countries.values()).map((c) => [c.iso2, c.iso3] as const)
+  );
+
+  // Get WDI last-updated date from the source metadata
   let apiLastUpdated = new Date().toLocaleDateString("en-US", {
     month: "2-digit",
     day: "2-digit",
     year: "numeric",
   });
   try {
-    const metaData = await fetchJson(`${API_BASE}/country?format=json&per_page=1`);
-    if (metaData?.[0]?.lastupdated) {
-      apiLastUpdated = metaData[0].lastupdated;
+    const metaData = await fetchJson(`${API_BASE}/source/2?format=json`);
+    if (metaData?.[1]?.[0]?.lastupdated) {
+      apiLastUpdated = metaData[1][0].lastupdated;
     }
   } catch {
     // Use default date
@@ -574,6 +586,7 @@ async function main(): Promise<void> {
       batch.map(async (indicator) => {
         const result = await fetchIndicatorData(
           indicator.id,
+          iso2ToIso3,
           opts.dateRange,
           opts.outputDir,
           startYear,
@@ -632,6 +645,22 @@ async function main(): Promise<void> {
         const filename = getFilename(countryCode, indicator.id);
         if (existsSync(join(opts.outputDir, filename))) {
           indexEntries.push({ countryCode, seriesCode: indicator.id });
+        }
+      }
+    }
+  }
+
+  // Partial runs (--indicators) keep the existing index entries for all
+  // indicators that weren't re-fetched, so metadata isn't truncated.
+  if (opts.indicators) {
+    const indexPath = join(opts.outputDir, "_index.csv");
+    if (existsSync(indexPath)) {
+      const refetched = new Set(indicators.map((ind) => ind.id));
+      const lines = (await readFile(indexPath, "utf-8")).split("\n").slice(2);
+      for (const line of lines) {
+        const [countryCode, seriesCode] = line.split(",");
+        if (countryCode && seriesCode && !refetched.has(seriesCode)) {
+          indexEntries.push({ countryCode, seriesCode });
         }
       }
     }
