@@ -75,12 +75,6 @@ BX.TRF.CURR.CD,"Secondary income receipts (BoP, current US$)"
 BX.TRF.PWKR.CD,"Personal transfers, receipts (BoP, current US$)"
 BX.TRF.PWKR.CD.DT,"Personal remittances, received (current US$)"
 BX.TRF.PWKR.DT.GD.ZS,"Personal remittances, received (% of GDP)"
-CC.EST,Control of Corruption: Estimate
-CC.NO.SRC,Control of Corruption: Number of Sources
-CC.PER.RNK,Control of Corruption: Percentile Rank
-CC.PER.RNK.LOWER,"Control of Corruption: Percentile Rank, Lower Bound of 90% Confidence Interval"
-CC.PER.RNK.UPPER,"Control of Corruption: Percentile Rank, Upper Bound of 90% Confidence Interval"
-CC.STD.ERR,Control of Corruption: Standard Error
 CM.MKT.INDX.ZG,S&P Global Equity Indices (annual % change)
 CM.MKT.LCAP.CD,Market capitalization of listed domestic companies (current US$)
 CM.MKT.LCAP.GD.ZS,Market capitalization of listed domestic companies (% of GDP)
@@ -404,22 +398,34 @@ GC.XPN.TOTL.CN,Expense (current LCU)
 GC.XPN.TOTL.GD.ZS,Expense (% of GDP)
 GC.XPN.TRFT.CN,Subsidies and other transfers (current LCU)
 GC.XPN.TRFT.ZS,Subsidies and other transfers (% of expense)
-GE.EST,Government Effectiveness: Estimate
-GE.NO.SRC,Government Effectiveness: Number of Sources
-GE.PER.RNK,Government Effectiveness: Percentile Rank
-GE.PER.RNK.LOWER,"Government Effectiveness: Percentile Rank, Lower Bound of 90% Confidence Interval"
-GE.PER.RNK.UPPER,"Government Effectiveness: Percentile Rank, Upper Bound of 90% Confidence Interval"
-GE.STD.ERR,Government Effectiveness: Standard Error
+GD_WBL_OVL_ENF,WBL: Enforcement Perceptions Index (scale 0-100)
+GD_WBL_OVL_LAW,WBL: Legal Framework Index (scale 0-100)
+GD_WBL_OVL_SFR,WBL: Supportive Framework Index (scale 0-100)
 GF.XPD.BUDG.ZS,Primary government expenditures as a proportion of original approved budget (%)
-HD.HCI.OVRL,Human Capital Index (HCI) (scale 0-1)
-HD.HCI.OVRL.FE,"Human Capital Index (HCI), Female (scale 0-1)"
-HD.HCI.OVRL.LB,"Human Capital Index (HCI), Lower Bound (scale 0-1)"
-HD.HCI.OVRL.LB.FE,"Human Capital Index (HCI), Female, Lower Bound (scale 0-1)"
-HD.HCI.OVRL.LB.MA,"Human Capital Index (HCI), Male, Lower Bound (scale 0-1)"
-HD.HCI.OVRL.MA,"Human Capital Index (HCI), Male (scale 0-1)"
-HD.HCI.OVRL.UB,"Human Capital Index (HCI), Upper Bound (scale 0-1)"
-HD.HCI.OVRL.UB.FE,"Human Capital Index (HCI), Female, Upper Bound (scale 0-1)"
-HD.HCI.OVRL.UB.MA,"Human Capital Index (HCI), Male, Upper Bound (scale 0-1)"
+GOV_WGI_CC_EST,Control of Corruption - Governance estimate (approx. -2.5 to +2.5)
+GOV_WGI_CC_SC,Control of Corruption - Governance score (0-100)
+GOV_WGI_GE_EST,Government Effectiveness - Governance estimate (approx. -2.5 to +2.5)
+GOV_WGI_GE_SC,Government Effectiveness - Governance score (0-100)
+GOV_WGI_PV_EST,Political Stability - Governance estimate (approx. -2.5 to +2.5)
+GOV_WGI_PV_SC,Political Stability - Governance score (0-100)
+GOV_WGI_RL_EST,Rule of Law - Governance estimate (approx. -2.5 to +2.5)
+GOV_WGI_RL_SC,Rule of Law - Governance score (0-100)
+GOV_WGI_RQ_EST,Regulatory Quality - Governance estimate (approx. -2.5 to +2.5)
+GOV_WGI_RQ_SC,Regulatory Quality - Governance score (0-100)
+GOV_WGI_VA_EST,Voice and Accountability - Governance estimate (approx. -2.5 to +2.5)
+GOV_WGI_VA_SC,Voice and Accountability - Governance score (0-100)
+HD_HCIP_EDUC_FE,"Human capital index plus (HCI+): education pillar score, female (scale 0–188)"
+HD_HCIP_EDUC_MA,"Human capital index plus (HCI+): education pillar score, male (scale 0–188)"
+HD_HCIP_EDUC_TO,"Human capital index plus (HCI+): education pillar score, total (scale 0–188)"
+HD_HCIP_HLTH_FE,"Human capital index plus (HCI+): health pillar score, female (scale 0–50)"
+HD_HCIP_HLTH_MA,"Human capital index plus (HCI+): health pillar score, male (scale 0–50)"
+HD_HCIP_HLTH_TO,"Human capital index plus (HCI+): health pillar score, total (scale 0–50)"
+HD_HCIP_OTJL_FE,"Human capital index plus (HCI+): on-the-job learning pillar score, female (scale -30–87)"
+HD_HCIP_OTJL_MA,"Human capital index plus (HCI+): on-the-job learning pillar score, male (scale -30–87)"
+HD_HCIP_OTJL_TO,"Human capital index plus (HCI+): on-the-job learning pillar score, total (scale -30–87)"
+HD_HCIP_OVRL_FE,"Human capital index plus (HCI+): overall score, female (scale 0–325)"
+HD_HCIP_OVRL_MA,"Human capital index plus (HCI+): overall score, male (scale 0–325)"
+HD_HCIP_OVRL_TO,"Human capital index plus (HCI+): overall score, total (scale 0–325)"
 IC.BRE.BE.OS,B-READY: Business Entry: Overall Score
 IC.BRE.BE.P1,B-READY: Business Entry Pillar 1: Quality of Regulations for Business Entry
 IC.BRE.BE.P2,B-READY: Business Entry Pillar 2: Digital Public Services and Transparency of Information for Business Entry
@@ -580,6 +586,8 @@ NE.CON.GOVT.KD,General government final consumption expenditure (constant 2015 U
 NE.CON.GOVT.KD.ZG,General government final consumption expenditure (annual % growth)
 NE.CON.GOVT.KN,General government final consumption expenditure (constant LCU)
 NE.CON.GOVT.ZS,General government final consumption expenditure (% of GDP)
+NE.CON.PCAP.PP.CD,"Households and NPISHs Final consumption expenditure per capita, PPP (current international $)"
+NE.CON.PCAP.PP.KD,"Households and NPISHs Final consumption expenditure per capita, PPP (constant 2021 international $)"
 NE.CON.PRVT.CD,Households and NPISHs Final consumption expenditure (current US$)
 NE.CON.PRVT.CN,Households and NPISHs Final consumption expenditure (current LCU)
 NE.CON.PRVT.CN.AD,Households and NPISHs final consumption expenditure: linked series (current LCU)
@@ -768,9 +776,10 @@ NY.TRF.NCTR.KN,Net secondary income (Net current transfers from abroad) (constan
 NY.TTF.GNFS.KN,Terms of trade adjustment (constant LCU)
 PA.NUS.ATLS,DEC alternative conversion factor (LCU per US$)
 PA.NUS.FCRF,"Official exchange rate (LCU per US$, period average)"
+PA.NUS.GDP.PLI,Price level index (GDP)
 PA.NUS.PPP,"PPP conversion factor, GDP (LCU per international $)"
-PA.NUS.PPPC.RF,Price level ratio of PPP conversion factor (GDP) to market exchange rate
-PA.NUS.PRVT.PP,"PPP conversion factor, private consumption (LCU per international $)"
+PA.NUS.PRVT.PLI,Price level index (Households and NPISHs Final consumption expenditure)
+PA.NUS.PRVT.PP,"PPP conversion factor, households and NPISHs Final consumption expenditure (LCU per international $)"
 per_allsp.adq_pop_tot,Adequacy of social protection and labor programs (% of total welfare of beneficiary households)
 per_allsp.ben_q1_tot,Benefit incidence of social protection and labor programs to poorest quintile (% of total SPL benefits)
 per_allsp.cov_pop_tot,Coverage of social protection and labor programs (% of population)
@@ -798,25 +807,7 @@ per_si_allsi.cov_q2_tot,Coverage of social insurance programs in 2nd quintile (%
 per_si_allsi.cov_q3_tot,Coverage of social insurance programs in 3rd quintile (% of population)
 per_si_allsi.cov_q4_tot,Coverage of social insurance programs in 4th quintile (% of population)
 per_si_allsi.cov_q5_tot,Coverage of social insurance programs in richest quintile (% of population)
-PV.EST,Political Stability and Absence of Violence/Terrorism: Estimate
-PV.NO.SRC,Political Stability and Absence of Violence/Terrorism: Number of Sources
-PV.PER.RNK,Political Stability and Absence of Violence/Terrorism: Percentile Rank
-PV.PER.RNK.LOWER,"Political Stability and Absence of Violence/Terrorism: Percentile Rank, Lower Bound of 90% Confidence Interval"
-PV.PER.RNK.UPPER,"Political Stability and Absence of Violence/Terrorism: Percentile Rank, Upper Bound of 90% Confidence Interval"
-PV.STD.ERR,Political Stability and Absence of Violence/Terrorism: Standard Error
 PX.REX.REER,Real effective exchange rate index (2010 = 100)
-RL.EST,Rule of Law: Estimate
-RL.NO.SRC,Rule of Law: Number of Sources
-RL.PER.RNK,Rule of Law: Percentile Rank
-RL.PER.RNK.LOWER,"Rule of Law: Percentile Rank, Lower Bound of 90% Confidence Interval"
-RL.PER.RNK.UPPER,"Rule of Law: Percentile Rank, Upper Bound of 90% Confidence Interval"
-RL.STD.ERR,Rule of Law: Standard Error
-RQ.EST,Regulatory Quality: Estimate
-RQ.NO.SRC,Regulatory Quality: Number of Sources
-RQ.PER.RNK,Regulatory Quality: Percentile Rank
-RQ.PER.RNK.LOWER,"Regulatory Quality: Percentile Rank, Lower Bound of 90% Confidence Interval"
-RQ.PER.RNK.UPPER,"Regulatory Quality: Percentile Rank, Upper Bound of 90% Confidence Interval"
-RQ.STD.ERR,Regulatory Quality: Standard Error
 SE.ADT.1524.LT.FE.ZS,"Literacy rate, youth female (% of females ages 15-24)"
 SE.ADT.1524.LT.FM.ZS,"Literacy rate, youth (ages 15-24), gender parity index (GPI)"
 SE.ADT.1524.LT.MA.ZS,"Literacy rate, youth male (% of males ages 15-24)"
@@ -976,7 +967,6 @@ SE.XPD.TOTL.GD.ZS,"Government expenditure on education, total (% of GDP)"
 SG.DMK.ALLD.FN.ZS,"Women participating in the three decisions (own health care, major household purchases, and visiting family) (% of women age 15-49)"
 SG.DMK.SRCR.FN.ZS,"Women making their own informed decisions regarding sexual relations, contraceptive use and reproductive health care (% of women age 15-49)"
 SG.GEN.PARL.ZS,Proportion of seats held by women in national parliaments (%)
-SG.LAW.INDX,Women Business and the Law Index Score (scale 1-100)
 SG.TIM.UWRK.FE,"Proportion of time spent on unpaid domestic and care work, female (% of 24 hour day)"
 SG.TIM.UWRK.MA,"Proportion of time spent on unpaid domestic and care work, male (% of 24 hour day) "
 SG.VAW.1549.ZS,Proportion of women subjected to physical and/or sexual violence in the last 12 months (% of ever-partnered women ages 15-49)
@@ -1014,6 +1004,7 @@ SH.DTH.INJR.ZS,"Cause of death, by injury (% of total)"
 SH.DTH.MORT,Number of under-five deaths
 SH.DTH.NCOM.ZS,"Cause of death, by non-communicable diseases (% of total)"
 SH.DTH.NMRT,Number of neonatal deaths
+SH.DTH.OCVD.ZS,"Cause of death, by other COVID-19 pandemic-related outcomes (% of total)"
 SH.DYN.0509,"Probability of dying among children ages 5-9 years (per 1,000)"
 SH.DYN.1014,"Probability of dying among adolescents ages 10-14 years (per 1,000)"
 SH.DYN.1519,"Probability of dying among adolescents ages 15-19 years (per 1,000)"
@@ -1156,7 +1147,7 @@ SI.POV.GAPS,Poverty gap at $3.00 a day (2021 PPP) (%)
 SI.POV.GINI,Gini index
 SI.POV.LMIC,Poverty headcount ratio at $4.20 a day (2021 PPP) (% of population)
 SI.POV.LMIC.GP,Poverty gap at $4.20 a day (2021 PPP) (%)
-SI.POV.MPUN,Multidimensional poverty headcount ratio (UNDP) (% of population)
+SI.POV.MPUN,Multidimensional poverty headcount ratio (UNDP & OPHI) (% of population)
 SI.POV.MPWB,Multidimensional poverty headcount ratio (World Bank) (% of population)
 SI.POV.NAHC,Poverty headcount ratio at national poverty lines (% of population)
 SI.POV.SOPO,Poverty headcount ratio at societal poverty line (% of population)
@@ -1501,12 +1492,6 @@ TX.VAL.TECH.CD,High-technology exports (current US$)
 TX.VAL.TECH.MF.ZS,High-technology exports (% of manufactured exports)
 TX.VAL.TRAN.ZS.WT,Transport services (% of commercial service exports)
 TX.VAL.TRVL.ZS.WT,Travel services (% of commercial service exports)
-VA.EST,Voice and Accountability: Estimate
-VA.NO.SRC,Voice and Accountability: Number of Sources
-VA.PER.RNK,Voice and Accountability: Percentile Rank
-VA.PER.RNK.LOWER,"Voice and Accountability: Percentile Rank, Lower Bound of 90% Confidence Interval"
-VA.PER.RNK.UPPER,"Voice and Accountability: Percentile Rank, Upper Bound of 90% Confidence Interval"
-VA.STD.ERR,Voice and Accountability: Standard Error
 VC.BTL.DETH,Battle-related deaths (number of people)
 VC.IDP.NWCV,"Internally displaced persons, new displacement associated with conflict and violence (number of cases)"
 VC.IDP.NWDS,"Internally displaced persons, new displacement associated with disasters (number of cases)"
